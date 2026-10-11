@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Trial - Undangan Digital</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: { 100: '#FBF6EE', 200: '#F2E3CD', 300: '#E5C8A0', 400: '#D4AF37', 500: '#C5A028', 600: '#9A7B1D' },
+                        dark: '#0A0A0A'
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        script: ['Great Vibes', 'cursive'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: scale(0.97); }
+            20% { opacity: 1; transform: scale(1); }
+            75% { opacity: 1; transform: scale(1.02); }
+            100% { opacity: 0; transform: scale(1.05); }
+        }
+        @keyframes fadeInSlow {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-intro-1 { animation: fadeInOut 3.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .animate-intro-2 { animation: fadeInOut 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .animate-fade-in-slow { animation: fadeInSlow 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    </style>
+</head>
+<body class="bg-dark text-white font-sans antialiased overflow-x-hidden">
+
+    <!-- ======================================================== -->
+    <!-- BAGIAN 1: DASHBOARD TRIAL (LOGIN & MASTER FORM)          -->
+    <!-- ======================================================== -->
+    <div id="view-dashboard" class="min-h-screen flex items-center justify-center p-6 relative z-50 bg-neutral-950">
+        <div class="w-full max-w-xl bg-neutral-900 border border-gold-400/30 p-8 rounded-3xl shadow-2xl">
+            <h1 class="text-2xl font-bold text-gold-400 mb-1 text-center font-cinzel">SaaS Builder Trial</h1>
+            <p class="text-neutral-400 text-xs text-center mb-6">Uji Coba Alur: Login ➔ Isi Data ➔ Bayar ➔ Buka Template Mewah</p>
+
+            <!-- Step A: Simulasi Login -->
+            <div id="auth-box" class="space-y-4 mb-6 pb-6 border-b border-neutral-800">
+                <h2 class="text-xs font-semibold uppercase tracking-wider text-gold-300">1. Masuk / Daftar Akun</h2>
+                <div>
+                    <label class="block text-xs text-neutral-400 mb-1">Email Anda</label>
+                    <input type="email" id="input-email" placeholder="latif@email.com" class="w-full bg-neutral-950 border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-gold-400 outline-none">
+                </div>
+                <button onclick="simulateLogin()" class="w-full bg-neutral-800 hover:bg-neutral-700 text-gold-300 border border-gold-400/40 text-xs font-bold py-2.5 rounded-lg transition cursor-pointer">
+                    Masuk ke Sistem (Supabase Auth)
+                </button>
+            </div>
+
+            <!-- Step B: Master Form (Terkunci sebelum login) -->
+            <div id="form-box" class="space-y-4 opacity-40 pointer-events-none transition-opacity">
+                <h2 class="text-xs font-semibold uppercase tracking-wider text-gold-300">2. Isi Data Undangan</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-neutral-400 mb-1">Nama Pria</label>
+                        <input type="text" id="form-pria" value="Moh. Latif, S.Kom" class="w-full bg-neutral-950 border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-gold-400 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-neutral-400 mb-1">Nama Wanita</label>
+                        <input type="text" id="form-wanita" value="Nanda Putri, S.Pd" class="w-full bg-neutral-950 border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-gold-400 outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-neutral-400 mb-1">Tanggal Acara</label>
+                    <input type="text" id="form-tanggal" value="KAMIS, 25 DESEMBER 2026" class="w-full bg-neutral-950 border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-gold-400 outline-none">
+                </div>
+                
+                <!-- Tombol Pembayaran Simulasi Midtrans -->
+                <button onclick="simulatePayment()" class="w-full bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 text-dark font-bold py-3 rounded-xl transition text-xs tracking-wider uppercase shadow-lg shadow-gold-500/20 cursor-pointer font-cinzel">
+                    Simpan & Bayar Trial (Rp5.000)
+                </button>
+            </div>
+            <p id="status-info" class="text-xs text-center text-gold-300 mt-4 font-mono"></p>
+        </div>
+    </div>
+
+
+    <!-- ======================================================== -->
+    <!-- BAGIAN 2: TEMPLATE HTML MEWAHMU (SEMUA ANIMASI & WAYANG) -->
+    <!-- ======================================================== -->
+    <div id="view-template" class="hidden relative z-40">
+
+        <!-- TAHAP 1: CINEMATIC INTRO -->
+        <div id="stage-1" class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center transition-opacity duration-1000">
+            <div id="intro-step-1" class="absolute opacity-0 text-center px-4">
+                <p class="text-gold-300 font-cinzel tracking-[0.4em] text-sm md:text-xl uppercase font-semibold">The Wedding of</p>
+            </div>
+            <div id="intro-step-2" class="absolute opacity-0 text-center px-4">
+                <h1 id="intro-names" class="text-gold-300 font-cinzel tracking-[0.3em] text-xl md:text-3xl uppercase font-semibold">Latif & Nanda</h1>
+            </div>
+        </div>
+
+        <!-- TAHAP 2: COVER UTAMA -->
+        <div id="stage-2" class="fixed inset-0 z-40 bg-cover bg-center flex flex-col items-center justify-between p-6 opacity-0 pointer-events-none transition-opacity duration-1000" style="background-image: url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1920');">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/55 to-black/85"></div>
+            <div class="relative z-10 text-center pt-12 animate-fade-in-slow">
+                <p class="text-gold-300 font-cinzel tracking-[0.3em] text-xs uppercase mb-3">The Wedding Celebration</p>
+                <!-- Nama Dinamis dari Form -->
+                <h2 id="cover-couple-name" class="text-gold-400 font-script text-6xl md:text-8xl mb-4">Latif & Nanda</h2>
+                <div class="w-20 h-[1px] bg-gold-400/70 mx-auto mb-6"></div>
+                <p class="text-neutral-200 text-xs bg-black/50 px-6 py-2 rounded-full border border-gold-400/30 inline-block">
+                    Special Invitation for You
+                </p>
+            </div>
+            <div class="relative z-10 text-center max-w-xl mx-auto pb-12">
+                <button id="open-btn" class="inline-flex items-center gap-3 px-9 py-4 bg-gradient-to-r from-gold-500 to-gold-600 text-dark font-cinzel font-bold text-xs tracking-[0.2em] uppercase rounded-full shadow-xl hover:scale-105 transition cursor-pointer">
+                    <i class="fa-solid fa-envelope-open-text"></i> Open Invitation
+                </button>
+            </div>
+        </div>
+
+        <!-- TAHAP 3: GUNUNGAN WAYANG & KELOPAK MAWAR -->
+        <div id="stage-3-overlay" class="fixed inset-0 z-30 pointer-events-none hidden flex overflow-hidden">
+            <canvas id="rose-canvas" class="absolute inset-0 z-35 pointer-events-none w-full h-full"></canvas>
+            <div id="gunungan-left" class="w-1/2 h-full bg-gradient-to-r from-neutral-950 to-neutral-900 border-r border-gold-400/40 relative z-30 transition-transform duration-[2200ms] ease-in-out"></div>
+            <div id="gunungan-right" class="w-1/2 h-full bg-gradient-to-l from-neutral-950 to-neutral-900 border-l border-gold-400/40 relative z-30 transition-transform duration-[2200ms] ease-in-out"></div>
+        </div>
+
+        <!-- MAIN INVITATION CONTENT -->
+        <main id="main-content" class="opacity-0 transition-opacity duration-1000 min-h-screen relative z-20">
+            <section class="relative min-h-screen flex flex-col items-center justify-center text-center p-6 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=1920');">
+                <div class="absolute inset-0 bg-dark/75"></div>
+                <div class="relative z-10 max-w-3xl mx-auto py-20">
+                    <span class="text-gold-300 font-cinzel tracking-[0.35em] uppercase text-xs block mb-4">The Wedding Celebration</span>
+                    <h1 id="main-couple-name" class="text-gold-400 font-script text-7xl md:text-9xl mb-6">Latif & Nanda</h1>
+                    <p id="main-date" class="text-neutral-300 font-cinzel tracking-widest text-sm md:text-lg mb-10 font-semibold">KAMIS, 25 DESEMBER 2026</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- SCRIPT PENGHUBUNG ALUR & ANIMASI -->
+    <script>
+        let globalData = { pria: "Latif", wanita: "Nanda", tanggal: "KAMIS, 25 DESEMBER 2026" };
+
+        function simulateLogin() {
+            const email = document.getElementById('input-email').value;
+            if(!email) { alert("Masukkan email dulu!"); return; }
+            
+            document.getElementById('auth-box').style.opacity = '0.5';
+            document.getElementById('form-box').classList.remove('opacity-40', 'pointer-events-none');
+            document.getElementById('status-info').textContent = "✓ Login Berhasil sebagai: " + email;
+        }
+
+        function simulatePayment() {
+            // Ambil data dari form
+            globalData.pria = document.getElementById('form-pria').value;
+            globalData.wanita = document.getElementById('form-wanita').value;
+            globalData.tanggal = document.getElementById('form-tanggal').value;
+
+            // Masukkan data ke template mewahmu
+            const combinedNames = globalData.pria + " & " + globalData.wanita;
+            document.getElementById('intro-names').textContent = combinedNames;
+            document.getElementById('cover-couple-name').textContent = combinedNames;
+            document.getElementById('main-couple-name').textContent = combinedNames;
+            document.getElementById('main-date').textContent = globalData.tanggal;
+
+            // Simulasi Midtrans Popup
+            alert("Simulasi Midtrans: Pembayaran Rp5.000 Berhasil! Status undangan aktif.");
+
+            // Sembunyikan Dashboard, Munculkan Template Mewahmu
+            document.getElementById('view-dashboard').style.display = 'none';
+            document.getElementById('view-template').classList.remove('hidden');
+
+            // Jalankan Animasi Intro Cinzel
+            runCinematicIntro();
+        }
+
+        function runCinematicIntro() {
+            const stage1 = document.getElementById('stage-1');
+            const step1 = document.getElementById('intro-step-1');
+            const step2 = document.getElementById('intro-step-2');
+            const stage2 = document.getElementById('stage-2');
+
+            setTimeout(() => { step1.classList.add('animate-intro-1'); }, 400);
+            setTimeout(() => { step2.classList.add('animate-intro-2'); }, 3600);
+            setTimeout(() => {
+                stage1.style.opacity = '0';
+                setTimeout(() => {
+                    stage1.remove();
+                    stage2.classList.remove('opacity-0', 'pointer-events-none');
+                }, 1000);
+            }, 7400);
+        }
+
+        // Tombol Buka Undangan & Gunungan Wayang
+        document.addEventListener('click', function(e) {
+            if(e.target && e.target.id === 'open-btn') {
+                const stage2 = document.getElementById('stage-2');
+                const stage3Overlay = document.getElementById('stage-3-overlay');
+                const gununganLeft = document.getElementById('gunungan-left');
+                const gununganRight = document.getElementById('gunungan-right');
+                const mainContent = document.getElementById('main-content');
+
+                stage2.style.opacity = '0';
+                stage2.style.pointerEvents = 'none';
+                stage3Overlay.classList.remove('hidden');
+
+                requestAnimationFrame(() => {
+                    gununganLeft.style.transform = 'translateX(-100%)';
+                    gununganRight.style.transform = 'translateX(100%)';
+                });
+
+                setTimeout(() => {
+                    mainContent.style.opacity = '1';
+                    stage3Overlay.remove();
+                    window.scrollTo(0, 0);
+                }, 2200);
+            }
+        });
+    </script>
+</body>
+</html>
