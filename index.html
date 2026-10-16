@@ -1,981 +1,637 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VERSO - Login & Signup</title>
-    
+    <title>WeddingAura - Galeri Template Undangan Eksklusif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            gold: '#C5A880',
+                            dark: '#1A1A1A',
+                            light: '#FBF9F6',
+                            accent: '#8C6D53'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            /* ==========================================
-               UBAH WARNA DI SINI
-               ========================================== */
-            --v-bg-main: #061A15;
-            --v-green-panel: #0D382D;
-            --v-green-light: #145342;
-            --v-green-hover: #1b6551;
-            --v-cream-main: #F4F0E5;
-            --v-cream-sec: #E9E1D1;
-            --v-text-dark: #26352C;
-            --v-text-muted: #5a6b60;
-            --v-text-light: #F4F0E5;
-            --v-gold: #C8B77C;
-            --v-border: rgba(38, 53, 44, 0.2);
-            --v-border-light: rgba(244, 240, 229, 0.2);
-            --v-error: #a8423f;
-
-            /* ==========================================
-               UBAH TIPOGRAFI DI SINI
-               ========================================== */
-            --font-serif: 'Georgia', 'Times New Roman', serif;
-            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-
-            /* ==========================================
-               UBAH DURASI ANIMASI DI SINI
-               ========================================== */
-            --ease-custom: cubic-bezier(0.76, 0, 0.24, 1);
-            --duration: 900ms;
-            
-            /* ==========================================
-               UBAH SUDUT DIAGONAL DI SINI
-               ========================================== */
-            --skew-x: 8%;
-            --skew-y: 6%; /* For mobile vertical layout */
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: var(--font-sans);
-            background-color: var(--v-bg-main);
-            color: var(--v-text-dark);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #FBF9F6;
+            color: #1A1A1A;
             overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            user-select: none;
         }
 
-        .verso-header {
-            padding: 1.5rem 3rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(244, 240, 229, 0.05);
-            color: var(--v-text-light);
-            font-size: 0.85rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
+        .font-serif {
+            font-family: 'Playfair Display', serif;
         }
 
-        .verso-brand {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        /* 3D Coverflow Stage with Deep Perspective */
+        .carousel-stage {
+            perspective: 1600px;
+            transform-style: preserve-3d;
+            touch-action: pan-y;
         }
 
-        .verso-brand span {
-            color: var(--v-gold);
-            font-weight: 400;
+        .template-card {
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            will-change: transform, opacity, filter;
+            transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), filter 0.65s ease, box-shadow 0.65s ease;
         }
 
-        .verso-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            position: relative;
+        /* Reference style: side cards are grayscale/monochrome, center is full color */
+        .template-card img {
+            transition: filter 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .verso-page-title {
-            text-align: center;
-            color: var(--v-text-light);
-            margin-bottom: 3rem;
-            z-index: 10;
-        }
-
-        .verso-page-title p {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--v-gold);
-            margin-bottom: 0.5rem;
-        }
-
-        .verso-page-title h1 {
-            font-family: var(--font-serif);
-            font-size: 2.5rem;
-            font-weight: 400;
-            letter-spacing: 0.02em;
-        }
-
-        .verso-card {
-            position: relative;
-            width: 100%;
-            max-width: 880px;
-            height: 520px;
-            background-color: var(--v-cream-main);
-            border-radius: 24px;
-            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255,255,255,0.05);
-            overflow: hidden;
-            display: flex;
-        }
-
-        /* Base Layer: Holds the Cream forms */
-        .verso-layer-base {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--v-cream-main);
-        }
-
-        /* Overlay Layer: Holds the Green background and Welcome texts */
-        .verso-layer-overlay {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--v-green-panel);
-            color: var(--v-text-light);
-            z-index: 10;
-            
-            /* State 1 (Login): Mask is on the Right */
-            clip-path: polygon(calc(50% + var(--skew-x)) 0, 200% 0, 200% 100%, calc(50% - var(--skew-x)) 100%);
-            transition: clip-path var(--duration) var(--ease-custom);
-            /* Soft inner shadow for depth against cream panel */
-            box-shadow: inset 20px 0 40px rgba(0,0,0,0.1); 
-        }
-
-        /* State 2 (Register): Mask moves to the Left */
-        .verso-card.is-register .verso-layer-overlay {
-            clip-path: polygon(-100% 0, calc(50% + var(--skew-x)) 0, calc(50% - var(--skew-x)) 100%, -100% 100%);
-            box-shadow: inset -20px 0 40px rgba(0,0,0,0.1);
-        }
-
-        .verso-panel {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 50%;
-            padding: 3rem 4rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            transition: all var(--duration) var(--ease-custom);
-        }
-
-        /* Form Panels (Cream) */
-        .verso-panel--login-form {
-            left: 0;
-            opacity: 1;
-            transform: translateX(0);
-            z-index: 5;
-        }
-        .verso-card.is-register .verso-panel--login-form {
-            opacity: 0;
-            transform: translateX(-40px);
-            pointer-events: none;
-        }
-
-        .verso-panel--register-form {
-            right: 0;
-            opacity: 0;
-            transform: translateX(40px);
-            pointer-events: none;
-            z-index: 5;
-        }
-        .verso-card.is-register .verso-panel--register-form {
-            opacity: 1;
-            transform: translateX(0);
-            pointer-events: auto;
-        }
-
-        /* Text Panels (Green) */
-        .verso-panel--login-text {
-            right: 0;
-            opacity: 1;
-            transform: translateX(0);
-        }
-        .verso-card.is-register .verso-panel--login-text {
-            opacity: 0;
-            transform: translateX(40px);
-        }
-
-        .verso-panel--register-text {
-            left: 0;
-            opacity: 0;
-            transform: translateX(-40px);
-        }
-        .verso-card.is-register .verso-panel--register-text {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .verso-label-small {
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--v-gold);
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .verso-heading {
-            font-family: var(--font-serif);
-            font-size: 3.2rem;
-            line-height: 1.1;
-            font-weight: 400;
-            margin-bottom: 1.5rem;
-        }
-
-        .verso-heading em {
-            font-style: italic;
-            color: var(--v-cream-sec);
-        }
-
-        .verso-description {
-            font-size: 1rem;
-            line-height: 1.6;
-            color: rgba(244, 240, 229, 0.8);
-            max-width: 85%;
-        }
-
-        .verso-form-title {
-            font-size: 1.75rem;
-            font-weight: 500;
-            margin-bottom: 2rem;
-            color: var(--v-text-dark);
-        }
-
-        .verso-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-            position: relative;        }
-
-        /* ==========================================
-           ANIMASI SCANNER
-           ========================================== */
-        .verso-scanner {
-            position: absolute;
-            top: -15px;
-            left: -15px;
-            right: -15px;
-            bottom: -15px;
-            pointer-events: none;
-            overflow: hidden;
-            z-index: 10;
-            border-radius: 12px;
+        /* Hide scrollbars */
+        .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
-
-        .verso-scanner.is-active {
-            display: block;
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
-        .verso-scanner-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: var(--v-green-light);
-            box-shadow: 0 0 15px 3px rgba(20, 83, 66, 0.4), 
-                        0 -30px 40px 10px rgba(20, 83, 66, 0.1); /* Efek ekor cahaya (tail) */
-            opacity: 0;
-            transform: translateY(0);
-        }
-
-        .verso-scanner.is-active .verso-scanner-line {
-            /* Sweep ke bawah dengan timing curve modern */
-            animation: versoScanSweep 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        @keyframes versoScanSweep {
-            0% { top: 0%; opacity: 0; }
-            10% { opacity: 1; }
-            85% { opacity: 1; top: 100%; }
-            100% { top: 100%; opacity: 0; }
-        }
-
-        .verso-input-group {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .verso-input-label {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--v-text-muted);
-            margin-bottom: 0.4rem;
-        }
-
-        .verso-input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid var(--v-border);
-            padding: 0.5rem 0;
-            font-size: 1rem;
-            color: var(--v-text-dark);
-            transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-            font-family: inherit;
-        }
-
-        .verso-input:focus {
-            outline: none;
-            border-bottom-color: var(--v-green-panel);
-        }
-
-        .verso-input.is-scanned {
-            border-bottom-color: var(--v-green-light);
-            background-color: rgba(20, 83, 66, 0.04);
-            box-shadow: 0 2px 10px rgba(20, 83, 66, 0.08);
-            border-radius: 4px 4px 0 0;
-        }
-
-        .verso-input::placeholder {
-            color: transparent; /* Keep layout, hide text if using floating labels, but we use static labels here */
-        }
-
-        .verso-pwd-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        
-        .verso-pwd-wrapper input {
-            padding-right: 30px; /* Space for icon */
-        }
-
-        .verso-pwd-toggle {
-            position: absolute;
-            right: 0;
-            bottom: 0.5rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--v-text-muted);
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: color 0.2s ease;
-        }
-
-        .verso-pwd-toggle:hover {
-            color: var(--v-text-dark);
-        }
-
-        .verso-pwd-toggle svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        .verso-pwd-toggle .icon-hide { display: none; }
-        .verso-pwd-toggle.is-visible .icon-show { display: none; }
-        .verso-pwd-toggle.is-visible .icon-hide { display: block; }
-
-        .verso-form-options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-        }
-
-        .verso-checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            color: var(--v-text-muted);
-        }
-
-        .verso-checkbox-label input {
-            accent-color: var(--v-green-panel);
-            width: 14px;
-            height: 14px;
-            cursor: pointer;
-        }
-
-        .verso-link {
-            color: var(--v-text-dark);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .verso-link:hover {
-            color: var(--v-green-light);
-        }
-
-        .verso-btn {
-            background-color: var(--v-green-panel);
-            color: var(--v-text-light);
-            border: none;
-            border-radius: 99px;
-            padding: 1rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            margin-top: 1rem;
-            transition: background-color 0.3s ease, transform 0.1s ease;
-            font-family: inherit;
-        }
-
-        .verso-btn:hover {
-            background-color: var(--v-green-hover);
-        }
-
-        .verso-btn:active {
-            transform: scale(0.98);
-        }
-
-        .verso-form-footer {
-            margin-top: 1.5rem;
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--v-text-muted);
-        }
-
-        @media (max-width: 900px) {
-            .verso-panel { padding: 2.5rem; }
-            .verso-heading { font-size: 2.5rem; }
-        }
-
-        @media (max-width: 768px) {
-            /* Perbaiki area main agar bisa discroll di layar HP tanpa memotong bagian atas */
-            .verso-main {
-                justify-content: flex-start;
-                padding-top: 2rem;
-                padding-bottom: 4rem;
-            }
-
-            .verso-card {
-                flex-direction: column;
-                height: 840px; /* Tinggi pasti dan memadai agar form tidak terpotong sama sekali */
-                flex-shrink: 0;
-                max-width: 480px;
-                margin: 0 auto;
-            }
-
-            .verso-panel {
-                width: 100%;
-                padding: 2.5rem;
-                align-items: center;
-                text-align: center;
-            }
-
-            .verso-form {
-                width: 100%;
-                max-width: 360px;
-                margin: 0 auto;
-            }
-
-            .verso-description { max-width: 100%; font-size: 0.95rem; }
-
-            /* Layer definitions for mobile: PEMISAH HORIZONTAL LURUS */
-            .verso-layer-overlay {
-                /* Mode Login: Mask kotak di bagian ATAS (30% area) */
-                clip-path: polygon(0 0%, 100% 0%, 100% 30%, 0 30%);
-                box-shadow: inset 0 -20px 40px rgba(0,0,0,0.1);
-            }
-
-            .verso-card.is-register .verso-layer-overlay {
-                /* Mode Register: Mask kotak di bagian BAWAH (30% area) */
-                clip-path: polygon(0 70%, 100% 70%, 100% 100%, 0 100%);
-                box-shadow: inset 0 20px 40px rgba(0,0,0,0.1);
-            }
-
-            /* Panel routing for mobile */
-            
-            /* Login Form (Krem, Area Bawah 70%) */
-            .verso-panel--login-form { 
-                top: 30%; 
-                height: 70%; 
-                transform: translateY(0); 
-                justify-content: center;
-            }
-            .verso-card.is-register .verso-panel--login-form { transform: translateY(40px); }
-
-            /* Register Form (Krem, Area Atas 70%) */
-            .verso-panel--register-form { 
-                top: 0; 
-                height: 70%; 
-                transform: translateY(-40px); 
-                justify-content: center;
-            }
-            .verso-card.is-register .verso-panel--register-form { transform: translateY(0); }
-
-            /* Login Text (Hijau, Area Atas 30%) */
-            .verso-panel--login-text { 
-                top: 0; 
-                height: 30%; 
-                transform: translateY(0); 
-                justify-content: center;
-            }
-            .verso-card.is-register .verso-panel--login-text { transform: translateY(-30px); }
-
-            /* Register Text (Hijau, Area Bawah 30%) */
-            .verso-panel--register-text { 
-                top: 70%; 
-                height: 30%; 
-                transform: translateY(30px); 
-                justify-content: center;
-            }
-            .verso-card.is-register .verso-panel--register-text { transform: translateY(0); }
-        }
-        
-        @media (max-width: 480px) {
-            .verso-main { padding: 1.5rem 1rem 3rem 1rem; }
-            .verso-card { height: 860px; border-radius: 20px; }
-            .verso-heading { font-size: 2rem; margin-bottom: 1rem; }
-            .verso-panel { padding: 1.5rem; }
-            
-            /* Pada layar sangat kecil, berikan proporsi lebih besar untuk formulir krem (72%) */
-            .verso-layer-overlay { clip-path: polygon(0 0%, 100% 0%, 100% 28%, 0 28%); }
-            .verso-card.is-register .verso-layer-overlay { clip-path: polygon(0 72%, 100% 72%, 100% 100%, 0 100%); }
-            
-            .verso-panel--login-form { top: 28%; height: 72%; }
-            .verso-panel--register-form { top: 0; height: 72%; }
-            .verso-panel--login-text { top: 0; height: 28%; }
-            .verso-panel--register-text { top: 72%; height: 28%; }
+        /* Smooth View Transitions */
+        .view-panel {
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
     </style>
 </head>
-<body>
+<body class="antialiased selection:bg-brand-gold selection:text-white">
 
-<header class="verso-header">
-    <div class="verso-brand">VERSO <span>/</span> EDITION</div>
-    <div>EN</div>
-</header>
-
-<main class="verso-main">
-    <div class="verso-titles">
-        <div class="verso-page-title">
-            <p>Login & Signup</p>
-            <h1>Animation</h1>
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center text-brand-accent font-serif font-bold text-lg">W</div>
+                <span class="font-serif font-bold text-xl tracking-wide">WeddingAura</span>
+            </div>
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-stone-600">
+                <a href="#beranda" class="hover:text-brand-accent transition">Beranda</a>
+                <a href="#fitur" class="hover:text-brand-accent transition">Fitur</a>
+                <a href="#galeri-section" class="text-brand-accent font-semibold">Koleksi Desain</a>
+                <a href="#testimoni" class="hover:text-brand-accent transition">Testimoni</a>
+            </nav>
+            <div>
+                <button class="bg-stone-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-stone-800 transition shadow-sm">
+                    Buat Undangan
+                </button>
+            </div>
         </div>
-    </div>
+    </header>
 
-    <div class="verso-card" id="versoCard">
-        
-        <!-- Base Layer (Cream Background) -->
-        <div class="verso-layer-base">
-            
-            <!-- LOGIN FORM (Left on Desktop, Bottom on Mobile) -->
-            <div class="verso-panel verso-panel--login-form">
-                <h2 class="verso-form-title">Sign in</h2>
-                <form class="verso-form" id="loginForm">
-                    <div class="verso-scanner"><div class="verso-scanner-line"></div></div>
-                    
-                    <div class="verso-input-group">
-                        <label class="verso-input-label" for="loginEmail">Username or email</label>
-                        <input type="text" id="loginEmail" class="verso-input" autocomplete="username" required>
+    <section id="beranda" class="py-16 md:py-24 bg-gradient-to-b from-stone-100 to-stone-50 text-center px-6 border-b border-stone-200">
+        <div class="max-w-3xl mx-auto">
+            <span class="text-xs uppercase tracking-[0.25em] text-brand-accent font-semibold mb-4 inline-block bg-brand-gold/10 px-4 py-1.5 rounded-full">Undangan Digital Eksklusif</span>
+            <h1 class="font-serif text-4xl md:text-6xl font-bold tracking-tight text-stone-900 mb-6 leading-tight">
+                Mulai Kisah Cinta Anda dengan Sempurna
+            </h1>
+            <p class="text-stone-600 text-base md:text-lg mb-8 leading-relaxed">
+                Platform undangan pernikahan online berstandar sinematik dengan fitur interaktif lengkap, desain elegan, dan mudah dibagikan kepada tamu terhormat.
+            </p>
+        </div>
+    </section>
+
+    <section id="galeri-section" class="py-20 bg-stone-50 relative overflow-hidden">
+        <!-- Background decorative ambient blur -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-100/40 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <!-- SECTION HEADER -->
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <div class="flex items-center justify-center space-x-2 mb-3">
+                    <span class="w-2 h-2 rounded-full bg-brand-gold"></span>
+                    <span class="text-xs uppercase tracking-[0.2em] font-semibold text-brand-accent">WeddingAura Studio &bull; <span id="total-count-badge">07</span> Templates</span>
+                </div>
+                <h2 class="font-serif text-3xl md:text-5xl font-bold text-stone-900 mb-4 tracking-tight">
+                    Temukan Desain yang Menceritakan Kisahmu
+                </h2>
+                <p class="text-stone-600 text-sm md:text-base leading-relaxed">
+                    Jelajahi koleksi undangan istimewa dan temukan desain yang paling sesuai dengan momen bahagiamu.
+                </p>
+            </div>
+
+            <!-- GALLERY MAIN CONTAINER (Gallery View) -->
+            <div id="gallery-view" class="view-panel opacity-100 transition-opacity duration-300">
+                <!-- 3D COVERFLOW STAGE -->
+                <div class="carousel-stage relative h-[420px] md:h-[500px] flex items-center justify-center select-none cursor-grab active:cursor-grabbing" id="carousel-container">
+                    <!-- Cards will be dynamically injected via JavaScript -->
+                </div>
+
+                <!-- CONTROLS & ACTIVE INFO AREA -->
+                <div class="mt-8 max-w-xl mx-auto text-center px-4">
+                    <!-- Counter Indicator -->
+                    <div class="mb-4 font-mono text-xs text-stone-500 font-semibold tracking-widest" id="carousel-counter">
+                        01 / 07
                     </div>
 
-                    <div class="verso-input-group">
-                        <label class="verso-input-label" for="loginPwd">Password</label>
-                        <div class="verso-pwd-wrapper">
-                            <input type="password" id="loginPwd" class="verso-input" autocomplete="current-password" required>
-                            <button type="button" class="verso-pwd-toggle" aria-label="Toggle password visibility">
-                                <!-- Eye Show Icon -->
-                                <svg class="icon-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                <!-- Eye Hide Icon -->
-                                <svg class="icon-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-                            </button>
+                    <!-- NAVIGATION BUTTONS & DASH INDICATORS -->
+                    <div class="flex items-center justify-center space-x-6 mb-4">
+                        <button id="prev-btn" aria-label="Template Sebelumnya" class="w-11 h-11 rounded-full bg-white border border-stone-300 flex items-center justify-center text-stone-700 shadow-sm hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all duration-300 focus:outline-none">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                        
+                        <!-- Line/Dash Indicators -->
+                        <div id="carousel-dots" class="flex items-center space-x-2">
+                            <!-- Injected by JS -->
+                        </div>
+
+                        <button id="next-btn" aria-label="Template Selanjutnya" class="w-11 h-11 rounded-full bg-white border border-stone-300 flex items-center justify-center text-stone-700 shadow-sm hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all duration-300 focus:outline-none">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Interaction Helper Text matching reference -->
+                    <div class="text-[11px] uppercase tracking-[0.25em] text-stone-400 font-semibold mb-6">
+                        DRAG &bull; SCROLL &bull; ARROWS
+                    </div>
+
+                    <!-- ACTIVE TEMPLATE META -->
+                    <div id="active-template-meta" class="mb-6 transition-all duration-300">
+                        <span id="active-category" class="text-xs font-semibold tracking-widest text-brand-accent uppercase bg-stone-200/70 px-3 py-1 rounded-full">Kategori</span>
+                        <h3 id="active-title" class="font-serif text-2xl md:text-3xl font-bold text-stone-900 mt-2 mb-1">Judul Template</h3>
+                        <p id="active-desc" class="text-stone-600 text-sm md:text-base">Deskripsi singkat template undangan pernikahan eksklusif.</p>
+                    </div>
+
+                    <!-- VIEW DETAIL ACTION BUTTON -->
+                    <div>
+                        <button id="view-detail-btn" class="inline-flex items-center space-x-3 bg-stone-900 text-white px-8 py-3.5 rounded-full font-medium text-sm hover:bg-stone-800 transition-all shadow-md hover:shadow-lg transform active:scale-95">
+                            <span>Lihat Detail & Pratinjau</span>
+                            <i class="fa-solid fa-arrow-right-long text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DETAIL VIEW CONTAINER (Hidden by default) -->
+            <div id="detail-view" class="view-panel opacity-0 pointer-events-none absolute inset-0 bg-stone-50 z-30 flex flex-col px-6 py-12 hidden">
+                <div class="max-w-6xl mx-auto w-full flex-1 flex flex-col">
+                    <!-- Top Navigation for Detail -->
+                    <div class="flex items-center justify-between pb-6 border-b border-stone-200 mb-8">
+                        <button id="back-to-gallery-btn" class="inline-flex items-center space-x-2 text-stone-700 hover:text-stone-900 font-medium text-sm transition bg-white px-4 py-2 rounded-full border border-stone-300 shadow-xs">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            <span>Kembali ke Galeri</span>
+                        </button>
+                        <div class="text-right">
+                            <span id="detail-category" class="text-xs uppercase tracking-widest text-brand-accent font-semibold">Kategori</span>
+                            <h2 id="detail-title" class="font-serif text-xl md:text-2xl font-bold text-stone-900">Nama Template</h2>
                         </div>
                     </div>
 
-                    <div class="verso-form-options">
-                        <label class="verso-checkbox-label">
-                            <input type="checkbox" checked> Keep me signed in
-                        </label>
-                        <a href="#" class="verso-link">Forgot password?</a>
-                    </div>
+                    <!-- Detail Content Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 items-center">
+                        <!-- Left: Mockup Preview Window -->
+                        <div class="lg:col-span-7 bg-white p-4 rounded-2xl shadow-xl border border-stone-200 h-[450px] md:h-[520px] flex flex-col relative overflow-hidden group">
+                            <!-- Browser simulation bar -->
+                            <div class="flex items-center justify-between pb-3 border-b border-stone-100 mb-4 px-2">
+                                <div class="flex space-x-1.5">
+                                    <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                                    <div class="w-3 h-3 rounded-full bg-amber-400"></div>
+                                    <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                                </div>
+                                <div id="detail-url-badge" class="bg-stone-100 text-stone-500 text-xs px-4 py-1 rounded-full font-mono">
+                                    https://weddingaura.id/demo/template
+                                </div>
+                                <div class="text-stone-400 text-xs"><i class="fa-solid fa-lock"></i></div>
+                            </div>
+                            <!-- Preview iframe/container representation -->
+                            <div id="detail-preview-container" class="flex-1 rounded-xl bg-stone-900 relative overflow-hidden flex items-center justify-center">
+                                <img id="detail-preview-img" src="" alt="Pratinjau Template" class="absolute inset-0 w-full h-full object-cover opacity-90 transition duration-700 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-8 text-white text-center">
+                                    <span class="text-brand-gold text-xs uppercase tracking-widest font-semibold mb-1">Undangan Pernikahan</span>
+                                    <h3 id="detail-preview-couple" class="font-serif text-3xl font-bold mb-2">Romeo & Juliet</h3>
+                                    <p class="text-stone-300 text-xs">12 Desember 2026 &bull; The Ballroom Hotel</p>
+                                </div>
+                            </div>
+                        </div>
 
-                    <button type="submit" class="verso-btn">Sign in</button>
+                        <!-- Right: Info & Actions -->
+                        <div class="lg:col-span-5 flex flex-col justify-center space-y-6 lg:pl-6">
+                            <div>
+                                <span class="inline-block px-3 py-1 rounded-full bg-brand-gold/15 text-brand-accent text-xs font-semibold uppercase tracking-wider mb-3">Siap Digunakan</span>
+                                <h3 id="detail-heading" class="font-serif text-3xl md:text-4xl font-bold text-stone-900 mb-4">Jawa Keraton</h3>
+                                <p id="detail-desc" class="text-stone-600 text-sm md:text-base leading-relaxed mb-6">
+                                    Desain klasik bernuansa kerajaan Jawa dengan ornamen batik emas autentik, memberikan kesan agung dan berwibawa pada hari bahagia Anda.
+                                </p>
+                            </div>
 
-                    <div class="verso-form-footer">
-                        New to VERSO? <a href="#" class="verso-link" id="btnToRegister">Create an account</a>
-                    </div>
-                </form>
-            </div>
+                            <div class="space-y-3 border-t border-stone-200 pt-6">
+                                <div class="flex items-center space-x-3 text-stone-700 text-sm">
+                                    <i class="fa-solid fa-check text-brand-accent"></i>
+                                    <span>Musik Latar Otomatis (Customizable)</span>
+                                </div>
+                                <div class="flex items-center space-x-3 text-stone-700 text-sm">
+                                    <i class="fa-solid fa-check text-brand-accent"></i>
+                                    <span>Buku Tamu Digital & RSVP Real-time</span>
+                                </div>
+                                <div class="flex items-center space-x-3 text-stone-700 text-sm">
+                                    <i class="fa-solid fa-check text-brand-accent"></i>
+                                    <span>Navigasi Peta & Amplop Digital Terintegrasi</span>
+                                </div>
+                            </div>
 
-            <!-- REGISTER FORM (Right on Desktop, Top on Mobile) -->
-            <div class="verso-panel verso-panel--register-form">
-                <h2 class="verso-form-title">Create account</h2>
-                <form class="verso-form" id="registerForm">
-                    <div class="verso-scanner"><div class="verso-scanner-line"></div></div>
-                    
-                    <div class="verso-input-group">
-                        <label class="verso-input-label" for="regName">Full name</label>
-                        <input type="text" id="regName" class="verso-input" autocomplete="name" required>
-                    </div>
-
-                    <div class="verso-input-group">
-                        <label class="verso-input-label" for="regEmail">Email address</label>
-                        <input type="email" id="regEmail" class="verso-input" autocomplete="email" required>
-                    </div>
-
-                    <div class="verso-input-group">
-                        <label class="verso-input-label" for="regPwd">Password</label>
-                        <div class="verso-pwd-wrapper">
-                            <input type="password" id="regPwd" class="verso-input" autocomplete="new-password" required>
-                            <button type="button" class="verso-pwd-toggle" aria-label="Toggle password visibility">
-                                <svg class="icon-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                <svg class="icon-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-                            </button>
+                            <div class="pt-4 flex flex-col sm:flex-row gap-4">
+                                <button onclick="selectTemplateAction()" class="flex-1 bg-stone-900 hover:bg-stone-800 text-white font-medium py-3.5 px-6 rounded-xl transition shadow-md text-center">
+                                    Pilih Template Ini
+                                </button>
+                                <button onclick="triggerLiveDemo()" class="bg-white border border-stone-300 hover:bg-stone-100 text-stone-800 font-medium py-3.5 px-6 rounded-xl transition text-center">
+                                    Live Demo
+                                </button>
+                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                    <button type="submit" class="verso-btn">Create account</button>
+    <footer class="bg-stone-900 text-stone-400 py-12 px-6 border-t border-stone-800">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between text-sm">
+            <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                <div class="w-8 h-8 rounded-full bg-brand-gold/20 flex items-center justify-center text-brand-gold font-serif font-bold">W</div>
+                <span class="text-white font-semibold">WeddingAura Platform</span>
+            </div>
+            <p>&copy; 2026 WeddingAura. Hak cipta dilindungi undang-undang.</p>
+            <div class="flex space-x-6 mt-4 md:mt-0">
+                <a href="#" class="hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fa-brands fa-tiktok"></i></a>
+            </div>
+        </div>
+    </footer>
 
-                    <div class="verso-form-footer">
-                        Already have an account? <a href="#" class="verso-link" id="btnToLogin">Sign in</a>
+    <script>
+        // Complete collection of wedding invitation templates
+        const templatesData = [
+            {
+                id: 1,
+                title: "Jawa Keraton",
+                category: "Traditional & Regal",
+                description: "Nuansa kerajaan Jawa klasik dengan ornamen batik emas autentik, memberikan kesan agung dan berwibawa.",
+                couple: "Ratri & Bagas",
+                image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 2,
+                title: "Modern Elegan",
+                category: "Minimalist Luxe",
+                description: "Tampilan bersih berbalut tipografi modern dan aksen garis minimalis yang menonjolkan estetika masa kini.",
+                couple: "Nadia & Arfin",
+                image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 3,
+                title: "Floral Romance",
+                category: "Botanical & Warm",
+                description: "Sentuhan bunga pastel lembut yang romantis, menciptakan atmosfer hangat dan penuh cinta bagi para tamu.",
+                couple: "Citra & Dimas",
+                image: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 4,
+                title: "Cinematic Wedding",
+                category: "Dark Moody Luxe",
+                description: "Gaya sinematik eksklusif dengan palet warna gelap elegan, cocok untuk resepsi malam hari yang mewah.",
+                couple: "Saskia & Rehan",
+                image: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 5,
+                title: "Rustic Garden",
+                category: "Natural & Earthy",
+                description: "Nuansa alam terbuka dengan elemen kayu hangat dan dedaunan hijau segar untuk pernikahan outdoor.",
+                couple: "Alya & Fikri",
+                image: "https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 6,
+                title: "Royal Velvet",
+                category: "Luxury Velvet",
+                description: "Sentuhan warna marun velvet mewah dipadu dengan ukiran emas royal untuk pesta megah.",
+                couple: "Dinda & Satria",
+                image: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 7,
+                title: "Ethereal Dream",
+                category: "Pastel & Dreamy",
+                description: "Pancaran warna langit senja yang lembut, menciptakan kesan romantis seolah dalam negeri dongeng.",
+                couple: "Kirana & Zidan",
+                image: "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80"
+            }
+        ];
+
+        let currentIndex = 0;
+        let visualPos = 0; // Continuous floating index for smooth drag & momentum
+        const totalTemplates = templatesData.length;
+
+        // DOM Elements mapping
+        const carouselContainer = document.getElementById('carousel-container');
+        const activeCategoryEl = document.getElementById('active-category');
+        const activeTitleEl = document.getElementById('active-title');
+        const activeDescEl = document.getElementById('active-desc');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const dotsContainer = document.getElementById('carousel-dots');
+        const carouselCounter = document.getElementById('carousel-counter');
+        const totalCountBadge = document.getElementById('total-count-badge');
+        const viewDetailBtn = document.getElementById('view-detail-btn');
+        const galleryView = document.getElementById('gallery-view');
+        const detailView = document.getElementById('detail-view');
+        const backToGalleryBtn = document.getElementById('back-to-gallery-btn');
+
+        // Detail elements
+        const detailCategory = document.getElementById('detail-category');
+        const detailTitle = document.getElementById('detail-title');
+        const detailHeading = document.getElementById('detail-heading');
+        const detailDesc = document.getElementById('detail-desc');
+        const detailPreviewImg = document.getElementById('detail-preview-img');
+        const detailPreviewCouple = document.getElementById('detail-preview-couple');
+
+        let cardElements = [];
+
+        function initCarouselDOM() {
+            carouselContainer.innerHTML = '';
+            dotsContainer.innerHTML = '';
+            cardElements = [];
+            totalCountBadge.textContent = String(totalTemplates).padStart(2, '0');
+
+            templatesData.forEach((template, index) => {
+                const card = document.createElement('div');
+                card.className = `template-card absolute w-[240px] sm:w-[280px] md:w-[320px] h-[340px] sm:h-[390px] md:h-[430px] rounded-2xl overflow-hidden shadow-2xl bg-white cursor-pointer border border-stone-200/80`;
+                
+                card.innerHTML = `
+                    <div class="relative w-full h-full group pointer-events-none">
+                        <img src="${template.image}" alt="${template.title}" class="card-img w-full h-full object-cover transition duration-500">
+                        <div class="card-overlay absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/20 to-transparent flex flex-col justify-end p-6 text-white transition-opacity duration-300">
+                            <span class="text-xs uppercase tracking-widest text-brand-gold font-semibold mb-1">${template.category}</span>
+                            <h4 class="font-serif text-lg font-bold">${template.title}</h4>
+                            <p class="text-xs text-stone-300 mt-0.5">${template.couple}</p>
+                        </div>
                     </div>
-                </form>
-            </div>
-        </div>
+                `;
 
-        <!-- Overlay Layer (Green Background & Mask) -->
-        <div class="verso-layer-overlay">
+                card.addEventListener('click', (e) => {
+                    if (isDragging) return;
+                    const diff = (index - currentIndex + totalTemplates) % totalTemplates;
+                    const shortestDiff = diff > totalTemplates / 2 ? diff - totalTemplates : diff;
+                    if (shortestDiff === 0) {
+                        openDetailView();
+                    } else {
+                        goToIndex(currentIndex + shortestDiff);
+                    }
+                });
+
+                carouselContainer.appendChild(card);
+                cardElements.push(card);
+
+                // Create dash indicator
+                const dot = document.createElement('button');
+                dot.className = `h-1.5 rounded-full transition-all duration-500`;
+                dot.setAttribute('aria-label', `Pilih template ${template.title}`);
+                dot.addEventListener('click', () => {
+                    goToIndex(index);
+                });
+                dotsContainer.appendChild(dot);
+            });
+
+            updateCarouselTransforms(currentIndex, false);
+            updateMetadata(currentIndex);
+        }
+
+        function updateCarouselTransforms(pos, withTransition = true) {
+            const isMobile = window.innerWidth < 640;
+            const spacing = isMobile ? 150 : 220;
+
+            cardElements.forEach((card, index) => {
+                let offset = index - pos;
+                offset = ((offset + totalTemplates * 1.5) % totalTemplates) - totalTemplates * 0.5;
+                if (offset < -totalTemplates / 2) offset += totalTemplates;
+                if (offset > totalTemplates / 2) offset -= totalTemplates;
+
+                const absOffset = Math.abs(offset);
+                const cardImg = card.querySelector('.card-img');
+                const cardOverlay = card.querySelector('.card-overlay');
+                
+                card.style.transition = withTransition ? 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), filter 0.65s ease, box-shadow 0.65s ease' : 'none';
+
+                if (absOffset > 2.5) {
+                    card.style.opacity = '0';
+                    card.style.pointerEvents = 'none';
+                    card.style.zIndex = '0';
+                    card.style.transform = `translateX(${offset * spacing}px) translateZ(-400px) scale(0.5) rotateY(${offset * -15}deg)`;
+                } else {
+                    card.style.opacity = `${Math.max(0.15, 1 - absOffset * 0.35)}`;
+                    card.style.pointerEvents = absOffset < 1.2 ? 'auto' : 'none';
+                    card.style.zIndex = `${Math.round(50 - absOffset * 10)}`;
+
+                    const translateX = offset * spacing;
+                    const translateZ = (1 - absOffset) * 80 - absOffset * 100;
+                    const scale = Math.max(0.7, 1 - absOffset * 0.15);
+                    const rotateY = offset * -18;
+
+                    card.style.transform = `translateX(${translateX}px) translateZ(${translateZ}px) scale(${scale}) rotateY(${rotateY}deg)`;
+
+                    // Reference match: Only center card is in full color, side cards are monochrome/grayscale
+                    if (absOffset < 0.35) {
+                        cardImg.style.filter = 'grayscale(0%) contrast(1) brightness(1)';
+                        cardOverlay.style.opacity = '1';
+                    } else {
+                        cardImg.style.filter = 'grayscale(100%) contrast(1.05) brightness(0.85)';
+                        cardOverlay.style.opacity = '0.7';
+                    }
+                }
+            });
+
+            // Update Counter & Dash indicators
+            const activeIdx = Math.round(((pos % totalTemplates) + totalTemplates) % totalTemplates);
+            carouselCounter.textContent = `${String(activeIdx + 1).padStart(2, '0')} / ${String(totalTemplates).padStart(2, '0')}`;
+
+            const dots = dotsContainer.children;
+            for (let i = 0; i < dots.length; i++) {
+                if (i === activeIdx) {
+                    dots[i].className = 'h-1.5 rounded-full transition-all duration-500 w-8 bg-stone-900';
+                } else {
+                    dots[i].className = 'h-1.5 rounded-full transition-all duration-500 w-2 bg-stone-300 hover:bg-stone-400';
+                }
+            }
+        }
+
+        function updateMetadata(idx) {
+            const targetIdx = ((idx % totalTemplates) + totalTemplates) % totalTemplates;
+            const tpl = templatesData[targetIdx];
+            activeCategoryEl.textContent = tpl.category;
+            activeTitleEl.textContent = tpl.title;
+            activeDescEl.textContent = tpl.description;
+        }
+
+        function goToIndex(targetIndex) {
+            currentIndex = ((targetIndex % totalTemplates) + totalTemplates) % totalTemplates;
+            visualPos = currentIndex;
+            updateCarouselTransforms(currentIndex, true);
+            updateMetadata(currentIndex);
+        }
+
+        function nextTemplate() {
+            goToIndex(currentIndex + 1);
+        }
+
+        function prevTemplate() {
+            goToIndex(currentIndex - 1);
+        }
+
+        nextBtn.addEventListener('click', nextTemplate);
+        prevBtn.addEventListener('click', prevTemplate);
+
+        // Keyboard navigation support
+        document.addEventListener('keydown', (e) => {
+            if (galleryView.classList.contains('opacity-100')) {
+                if (e.key === 'ArrowRight') nextTemplate();
+                if (e.key === 'ArrowLeft') prevTemplate();
+            }
+        });
+
+        let isDragging = false;
+        let startX = 0;
+        let currentX = 0;
+        let dragStartTime = 0;
+
+        carouselContainer.addEventListener('pointerdown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            currentX = startX;
+            dragStartTime = Date.now();
+            carouselContainer.setPointerCapture(e.pointerId);
+            carouselContainer.style.cursor = 'grabbing';
+        });
+
+        carouselContainer.addEventListener('pointermove', (e) => {
+            if (!isDragging) return;
+            currentX = e.clientX;
+            const deltaX = currentX - startX;
+            const isMobile = window.innerWidth < 640;
+            const sensitivity = isMobile ? 150 : 220;
             
-            <!-- REGISTER TEXT (Left on Desktop, Bottom on Mobile) -->
-            <div class="verso-panel verso-panel--register-text">
-                <span class="verso-label-small">Your next chapter</span>
-                <h2 class="verso-heading">Start the <br><em>first page.</em></h2>
-                <p class="verso-description">Create your space. Keep your ideas, drafts and people together in one secure place.</p>
-            </div>
+            visualPos = currentIndex - (deltaX / sensitivity);
+            updateCarouselTransforms(visualPos, false);
+        });
 
-            <!-- LOGIN TEXT (Right on Desktop, Top on Mobile) -->
-            <div class="verso-panel verso-panel--login-text">
-                <span class="verso-label-small">Welcome back</span>
-                <h2 class="verso-heading">Welcome <br><em>back.</em></h2>
-                <p class="verso-description">Your boards, your drafts and your people are exactly where you left them.</p>
-            </div>
+        function handlePointerUp(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            carouselContainer.style.cursor = 'grab';
 
-        </div>
-    </div>
-</main>
+            const dragDuration = Date.now() - dragStartTime;
+            const deltaX = currentX - startX;
+            const isMobile = window.innerWidth < 640;
+            const sensitivity = isMobile ? 150 : 220;
 
-<script>
-    // ======================================================================
-    // KONFIGURASI UTAMA VERSO (UBAH TEKS, NAMA BRAND, DAN GAMBAR DI SINI)
-    // ======================================================================
-    const VERSO_CONFIG = {
-        // UBAH NAMA BRAND DI SINI
-        brand: {
-            name: "VERSO",
-            edition: "EDITION",
-            // UBAH URL LOGO DI SINI (kosongkan "" jika hanya ingin menggunakan teks)
-            logoUrl: "" // Contoh: "https://logo.clearbit.com/github.com" atau "assets/logo.png"
-        },
-        
-        // UBAH TEKS HEADER DI SINI
-        header: {
-            pageSubtitle: "Login & Signup",
-            mainTitle: "Animation"
-        },
-        
-        // UBAH GAMBAR PANEL DI SINI (Opsional, gunakan URL atau path lokal)
-        // Gambar ini akan melebur dengan warna hijau panel secara elegan.
-        images: {
-            loginBgUrl: "",    // Contoh: "https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=800"
-            registerBgUrl: ""  // Kosongkan jika ingin warna solid saja
-        },
-        
-        // UBAH TEKS LOGIN DI SINI
-        login: {
-            formTitle: "Sign in",
-            usernameLabel: "Username or email",
-            passwordLabel: "Password",
-            keepSignedIn: "Keep me signed in",
-            forgotPassword: "Forgot password?",
-            submitButton: "Sign in",
-            footerText: "New to VERSO?",
-            footerLink: "Create an account",
-            // Teks panel sambutan (ketika login aktif, panel ini di kanan)
-            welcomeLabel: "Welcome back",
-            welcomeTitleHtml: "Welcome <br><em>back.</em>", // Mendukung tag HTML seperti <br> dan <em>
-            welcomeDesc: "Your boards, your drafts and your people are exactly where you left them."
-        },
-        
-        // UBAH TEKS REGISTER DI SINI
-        register: {
-            formTitle: "Create account",
-            nameLabel: "Full name",
-            emailLabel: "Email address",
-            passwordLabel: "Password",
-            submitButton: "Create account",
-            footerText: "Already have an account?",
-            footerLink: "Sign in",
-            // Teks panel sambutan (ketika register aktif, panel ini di kiri)
-            welcomeLabel: "Your next chapter",
-            welcomeTitleHtml: "Start the <br><em>first page.</em>",
-            welcomeDesc: "Create your space. Keep your ideas, drafts and people together in one secure place."
+            let targetOffset = -deltaX / sensitivity;
+            if (dragDuration < 300 && Math.abs(deltaX) > 30) {
+                targetOffset = deltaX > 0 ? -0.8 : 0.8;
+            }
+
+            const targetIndex = Math.round(currentIndex + targetOffset);
+            goToIndex(targetIndex);
         }
-    };
 
-    function applyVersoConfig() {
-        try {
-            // Safe setter helpers to prevent null reference errors if elements are missing
-            const setSafeText = (parent, selector, text) => {
-                const el = parent ? parent.querySelector(selector) : null;
-                if (el) el.textContent = text;
-            };
-            const setSafeHtml = (parent, selector, html) => {
-                const el = parent ? parent.querySelector(selector) : null;
-                if (el) el.innerHTML = html;
-            };
+        carouselContainer.addEventListener('pointerup', handlePointerUp);
+        carouselContainer.addEventListener('pointercancel', handlePointerUp);
 
-            // 1. Setup Brand & Header
-            const brandEl = document.querySelector('.verso-brand');
-            if (brandEl) {
-                if (VERSO_CONFIG.brand.logoUrl) {
-                    const img = document.createElement('img');
-                    img.src = VERSO_CONFIG.brand.logoUrl;
-                    img.alt = VERSO_CONFIG.brand.name;
-                    img.style.maxHeight = '20px';
-                    img.style.display = 'block';
-                    // Jika gambar gagal dimuat, kembalikan ke teks asli dengan aman
-                    img.onerror = () => { 
-                        img.style.display = 'none'; 
-                        brandEl.innerHTML = `${VERSO_CONFIG.brand.name} <span>/</span> ${VERSO_CONFIG.brand.edition}`; 
-                    };
-                    brandEl.innerHTML = '';
-                    brandEl.appendChild(img);
-                } else {
-                    brandEl.innerHTML = `${VERSO_CONFIG.brand.name} <span>/</span> ${VERSO_CONFIG.brand.edition}`;
-                }
-            }
+        function openDetailView() {
+            const activeIdx = ((Math.round(currentIndex) % totalTemplates) + totalTemplates) % totalTemplates;
+            const activeTpl = templatesData[activeIdx];
+            detailCategory.textContent = activeTpl.category;
+            detailTitle.textContent = activeTpl.title;
+            detailHeading.textContent = activeTpl.title;
+            detailDesc.textContent = activeTpl.description;
+            detailPreviewImg.src = activeTpl.image;
+            detailPreviewCouple.textContent = activeTpl.couple;
 
-            const pageTitle = document.querySelector('.verso-page-title');
-            if (pageTitle) {
-                setSafeText(pageTitle, 'p', VERSO_CONFIG.header.pageSubtitle);
-                setSafeText(pageTitle, 'h1', VERSO_CONFIG.header.mainTitle);
-            }
+            galleryView.classList.remove('opacity-100');
+            galleryView.classList.add('opacity-0', 'pointer-events-none');
 
-            // 2. Setup Login Form
-            const loginForm = document.querySelector('.verso-panel--login-form');
-            if (loginForm) {
-                setSafeText(loginForm, '.verso-form-title', VERSO_CONFIG.login.formTitle);
-                setSafeText(loginForm, 'label[for="loginEmail"]', VERSO_CONFIG.login.usernameLabel);
-                setSafeText(loginForm, 'label[for="loginPwd"]', VERSO_CONFIG.login.passwordLabel);
-                
-                const keepMeLabel = loginForm.querySelector('.verso-checkbox-label');
-                if (keepMeLabel && keepMeLabel.lastChild && keepMeLabel.lastChild.nodeType === Node.TEXT_NODE) {
-                    keepMeLabel.lastChild.textContent = ' ' + VERSO_CONFIG.login.keepSignedIn;
-                }
-                
-                setSafeText(loginForm, '.verso-link', VERSO_CONFIG.login.forgotPassword);
-                setSafeText(loginForm, '.verso-btn', VERSO_CONFIG.login.submitButton);
-                
-                const loginFooter = loginForm.querySelector('.verso-form-footer');
-                if (loginFooter && loginFooter.childNodes[0] && loginFooter.childNodes[0].nodeType === Node.TEXT_NODE) {
-                    loginFooter.childNodes[0].nodeValue = VERSO_CONFIG.login.footerText + ' ';
-                }
-                setSafeText(loginForm, '#btnToRegister', VERSO_CONFIG.login.footerLink);
-            }
-
-            // 3. Setup Register Form
-            const regForm = document.querySelector('.verso-panel--register-form');
-            if (regForm) {
-                setSafeText(regForm, '.verso-form-title', VERSO_CONFIG.register.formTitle);
-                setSafeText(regForm, 'label[for="regName"]', VERSO_CONFIG.register.nameLabel);
-                setSafeText(regForm, 'label[for="regEmail"]', VERSO_CONFIG.register.emailLabel);
-                setSafeText(regForm, 'label[for="regPwd"]', VERSO_CONFIG.register.passwordLabel);
-                setSafeText(regForm, '.verso-btn', VERSO_CONFIG.register.submitButton);
-                
-                const regFooter = regForm.querySelector('.verso-form-footer');
-                if (regFooter && regFooter.childNodes[0] && regFooter.childNodes[0].nodeType === Node.TEXT_NODE) {
-                    regFooter.childNodes[0].nodeValue = VERSO_CONFIG.register.footerText + ' ';
-                }
-                setSafeText(regForm, '#btnToLogin', VERSO_CONFIG.register.footerLink);
-            }
-
-            // 4. Setup Welcome Texts (Green Panels)
-            const loginText = document.querySelector('.verso-panel--login-text');
-            if (loginText) {
-                setSafeText(loginText, '.verso-label-small', VERSO_CONFIG.login.welcomeLabel);
-                setSafeHtml(loginText, '.verso-heading', VERSO_CONFIG.login.welcomeTitleHtml);
-                setSafeText(loginText, '.verso-description', VERSO_CONFIG.login.welcomeDesc);
-            }
-
-            const regText = document.querySelector('.verso-panel--register-text');
-            if (regText) {
-                setSafeText(regText, '.verso-label-small', VERSO_CONFIG.register.welcomeLabel);
-                setSafeHtml(regText, '.verso-heading', VERSO_CONFIG.register.welcomeTitleHtml);
-                setSafeText(regText, '.verso-description', VERSO_CONFIG.register.welcomeDesc);
-            }
-
-            // 5. Setup Optional Background Images
-            const setupBgImage = (panel, url) => {
-                if (url && panel) {
-                    const bg = document.createElement('div');
-                    bg.style.position = 'absolute';
-                    bg.style.inset = '0';
-                    bg.style.zIndex = '-1'; 
-                    bg.style.backgroundImage = `url('${url}')`;
-                    bg.style.backgroundSize = 'cover';
-                    bg.style.backgroundPosition = 'center';
-                    // Blending mode memberikan efek premium tanpa menutupi warna hijau asli
-                    bg.style.opacity = '0.25'; 
-                    bg.style.mixBlendMode = 'overlay'; 
-                    
-                    const imgTest = new Image();
-                    imgTest.src = url;
-                    imgTest.onload = () => {
-                        // Hanya tambahkan elemen background jika gambar berhasil dimuat
-                        panel.appendChild(bg);
-                    };
-                }
-            };
-
-            setupBgImage(document.querySelector('.verso-panel--login-text'), VERSO_CONFIG.images.loginBgUrl);
-            setupBgImage(document.querySelector('.verso-panel--register-text'), VERSO_CONFIG.images.registerBgUrl);
-
-        } catch (e) {
-            console.error("Verso Configuration Error:", e);
-            // Fallback akan menggunakan HTML yang ada jika terjadi error konfigurasi
+            detailView.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+            detailView.classList.add('opacity-100');
+            window.scrollTo({ top: document.getElementById('galeri-section').offsetTop, behavior: 'smooth' });
         }
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        // Terapkan konfigurasi terlebih dahulu
-        applyVersoConfig();
-        
-        const card = document.getElementById('versoCard');
-        const btnToRegister = document.getElementById('btnToRegister');
-        const btnToLogin = document.getElementById('btnToLogin');
-        const pwdToggles = document.querySelectorAll('.verso-pwd-toggle');
-        const forms = document.querySelectorAll('form');
+        function closeDetailView() {
+            detailView.classList.remove('opacity-100');
+            detailView.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                detailView.classList.add('hidden');
+            }, 300);
 
-        // Handle transitions
-        btnToRegister.addEventListener('click', (e) => {
-            e.preventDefault();
-            // Add class to trigger CSS clip-path and transform animations
-            card.classList.add('is-register');
+            galleryView.classList.remove('opacity-0', 'pointer-events-none');
+            galleryView.classList.add('opacity-100');
+            updateCarouselTransforms(currentIndex, false);
+        }
+
+        viewDetailBtn.addEventListener('click', openDetailView);
+        backToGalleryBtn.addEventListener('click', closeDetailView);
+
+        function selectTemplateAction() {
+            const activeIdx = ((Math.round(currentIndex) % totalTemplates) + totalTemplates) % totalTemplates;
+            const activeTpl = templatesData[activeIdx];
+            const msgBox = document.createElement('div');
+            msgBox.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4';
+            msgBox.innerHTML = `
+                <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl text-center transform animate-in fade-in zoom-in duration-200">
+                    <div class="w-12 h-12 rounded-full bg-brand-gold/20 text-brand-accent flex items-center justify-center mx-auto mb-4 text-xl">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-stone-900 mb-2">Template Dipilih!</h3>
+                    <p class="text-stone-600 text-sm mb-6">Anda telah memilih <strong class="text-stone-900">${activeTpl.title}</strong> (${activeTpl.couple}). Mengarahkan ke formulir pemesanan undangan...</p>
+                    <button onclick="this.closest('.fixed').remove()" class="bg-stone-900 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-stone-800 transition">OK</button>
+                </div>
+            `;
+            document.body.appendChild(msgBox);
+        }
+
+        function triggerLiveDemo() {
+            const activeIdx = ((Math.round(currentIndex) % totalTemplates) + totalTemplates) % totalTemplates;
+            const activeTpl = templatesData[activeIdx];
+            const msgBox = document.createElement('div');
+            msgBox.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4';
+            msgBox.innerHTML = `
+                <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl text-center transform animate-in fade-in zoom-in duration-200">
+                    <div class="w-12 h-12 rounded-full bg-stone-100 text-stone-900 flex items-center justify-center mx-auto mb-4 text-xl">
+                        <i class="fa-solid fa-eye"></i>
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-stone-900 mb-2">Live Demo Interaktif</h3>
+                    <p class="text-stone-600 text-sm mb-6">Membuka pratinjau penuh layar untuk template <strong class="text-stone-900">${activeTpl.title}</strong>...</p>
+                    <button onclick="this.closest('.fixed').remove()" class="bg-stone-900 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-stone-800 transition">Tutup Pratinjau</button>
+                </div>
+            `;
+            document.body.appendChild(msgBox);
+        }
+
+        // Initialize carousel on window load
+        window.onload = function() {
+            initCarouselDOM();
+        };
+
+        // Re-calculate transforms on window resize
+        window.addEventListener('resize', () => {
+            updateCarouselTransforms(currentIndex, false);
         });
-
-        btnToLogin.addEventListener('click', (e) => {
-            e.preventDefault();
-            // Remove class to revert back
-            card.classList.remove('is-register');
-        });
-
-        // Handle password visibility toggles
-        pwdToggles.forEach(btn => {
-            btn.addEventListener('click', function() {
-                // Find the input element right before this button
-                const input = this.previousElementSibling;
-                
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    this.classList.add('is-visible');
-                } else {
-                    input.type = 'password';
-                    this.classList.remove('is-visible');
-                }
-            });
-        });
-
-        // Prevent actual form submissions for demonstration purposes
-        forms.forEach(form => {
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                // 1. Validasi Bawaan (Pastikan input diisi dengan format yang benar)
-                if (!form.checkValidity()) {
-                    form.reportValidity();
-                    return;
-                }
-
-                const btn = form.querySelector('.verso-btn');
-                
-                // Cegah spam klik yang bisa merusak animasi
-                if (btn.disabled) return;
-                btn.disabled = true;
-                
-                const originalText = btn.innerText;
-                const scanner = form.querySelector('.verso-scanner');
-                const inputs = form.querySelectorAll('.verso-input');
-                const formHeight = form.offsetHeight;
-
-                // 3. Fungsi memproses "Demo Submit" setelah animasi scanner selesai
-                const processSubmit = () => {
-                    btn.innerText = 'Processing...';
-                    btn.style.opacity = '0.8';
-                    btn.style.pointerEvents = 'none';
-
-                    setTimeout(() => {
-                        btn.innerText = originalText;
-                        btn.style.opacity = '1';
-                        btn.style.pointerEvents = 'auto';
-                        btn.disabled = false;
-                        
-                        // Optional: Show brief success state
-                        const footer = form.querySelector('.verso-form-footer');
-                        const oldFooterHtml = footer.innerHTML;
-                        footer.innerHTML = `<span style="color: var(--v-green-panel); font-weight: 500;">Success! (Demo only)</span>`;
-                        
-                        setTimeout(() => {
-                            footer.innerHTML = oldFooterHtml;
-                            // Re-attach listeners to dynamic buttons
-                            if (originalText === 'Sign in' || (typeof VERSO_CONFIG !== 'undefined' && originalText === VERSO_CONFIG.login.submitButton)) {
-                                const regBtn = document.getElementById('btnToRegister');
-                                if(regBtn) regBtn.addEventListener('click', (ev) => { ev.preventDefault(); card.classList.add('is-register'); });
-                            } else {
-                                const logBtn = document.getElementById('btnToLogin');
-                                if(logBtn) logBtn.addEventListener('click', (ev) => { ev.preventDefault(); card.classList.remove('is-register'); });
-                            }
-                        }, 2000);
-                    }, 1000);
-                };
-
-                // 2. Mainkan Animasi Scanner
-                if (scanner) {
-                    scanner.classList.add('is-active');
-                    
-                    // Mainkan kalkulasi sorot efek cahaya (highlight) berjejer ke bawah
-                    inputs.forEach(input => {
-                        const inputTop = input.offsetTop;
-                        // Durasi visual sweep hingga 100% tercapai sekitar 85% dari total animasi 1200ms = ~1020ms
-                        const hitTime = (inputTop / formHeight) * 1020;
-                        
-                        setTimeout(() => {
-                            input.classList.add('is-scanned');
-                            setTimeout(() => {
-                                input.classList.remove('is-scanned');
-                            }, 450); // Lama field menyala
-                        }, hitTime);
-                    });
-
-                    // Teruskan ke simulasi proses server (setelah 1.2s usai sweep hilang)
-                    setTimeout(() => {
-                        scanner.classList.remove('is-active');
-                        processSubmit();
-                    }, 1300);
-                } else {
-                    // Fallback aman
-                    processSubmit();
-                }
-            });
-        });
-    });
-</script>
-
+    </script>
 </body>
 </html>
