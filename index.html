@@ -1,230 +1,914 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS Trial - Undangan Digital</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        gold: { 100: '#FBF6EE', 200: '#F2E3CD', 300: '#E5C8A0', 400: '#D4AF37', 500: '#C5A028', 600: '#9A7B1D' },
-                        dark: '#0A0A0A'
-                    },
-                    fontFamily: {
-                        cinzel: ['Cinzel', 'serif'],
-                        script: ['Great Vibes', 'cursive'],
-                        sans: ['Plus Jakarta Sans', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>VERSO - Login & Signup</title>
     
     <style>
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: scale(0.97); }
-            20% { opacity: 1; transform: scale(1); }
-            75% { opacity: 1; transform: scale(1.02); }
-            100% { opacity: 0; transform: scale(1.05); }
+        :root {
+            /* ==========================================
+               UBAH WARNA DI SINI
+               ========================================== */
+            --v-bg-main: #061A15;
+            --v-green-panel: #0D382D;
+            --v-green-light: #145342;
+            --v-green-hover: #1b6551;
+            --v-cream-main: #F4F0E5;
+            --v-cream-sec: #E9E1D1;
+            --v-text-dark: #26352C;
+            --v-text-muted: #5a6b60;
+            --v-text-light: #F4F0E5;
+            --v-gold: #C8B77C;
+            --v-border: rgba(38, 53, 44, 0.2);
+            --v-border-light: rgba(244, 240, 229, 0.2);
+            --v-error: #a8423f;
+
+            /* ==========================================
+               UBAH TIPOGRAFI DI SINI
+               ========================================== */
+            --font-serif: 'Georgia', 'Times New Roman', serif;
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+            /* ==========================================
+               UBAH DURASI ANIMASI DI SINI
+               ========================================== */
+            --ease-custom: cubic-bezier(0.76, 0, 0.24, 1);
+            --duration: 900ms;
+            
+            /* ==========================================
+               UBAH SUDUT DIAGONAL DI SINI
+               ========================================== */
+            --skew-x: 8%;
+            --skew-y: 6%; /* For mobile vertical layout */
         }
-        @keyframes fadeInSlow {
-            0% { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .animate-intro-1 { animation: fadeInOut 3.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        .animate-intro-2 { animation: fadeInOut 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        .animate-fade-in-slow { animation: fadeInSlow 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--v-bg-main);
+            color: var(--v-text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .verso-header {
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(244, 240, 229, 0.05);
+            color: var(--v-text-light);
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .verso-brand {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .verso-brand span {
+            color: var(--v-gold);
+            font-weight: 400;
+        }
+
+        .verso-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .verso-page-title {
+            text-align: center;
+            color: var(--v-text-light);
+            margin-bottom: 3rem;
+            z-index: 10;
+        }
+
+        .verso-page-title p {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--v-gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .verso-page-title h1 {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+        }
+
+        .verso-card {
+            position: relative;
+            width: 100%;
+            max-width: 880px;
+            height: 520px;
+            background-color: var(--v-cream-main);
+            border-radius: 24px;
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255,255,255,0.05);
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* Base Layer: Holds the Cream forms */
+        .verso-layer-base {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--v-cream-main);
+        }
+
+        /* Overlay Layer: Holds the Green background and Welcome texts */
+        .verso-layer-overlay {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--v-green-panel);
+            color: var(--v-text-light);
+            z-index: 10;
+            
+            /* State 1 (Login): Mask is on the Right */
+            clip-path: polygon(calc(50% + var(--skew-x)) 0, 200% 0, 200% 100%, calc(50% - var(--skew-x)) 100%);
+            transition: clip-path var(--duration) var(--ease-custom);
+            /* Soft inner shadow for depth against cream panel */
+            box-shadow: inset 20px 0 40px rgba(0,0,0,0.1); 
+        }
+
+        /* State 2 (Register): Mask moves to the Left */
+        .verso-card.is-register .verso-layer-overlay {
+            clip-path: polygon(-100% 0, calc(50% + var(--skew-x)) 0, calc(50% - var(--skew-x)) 100%, -100% 100%);
+            box-shadow: inset -20px 0 40px rgba(0,0,0,0.1);
+        }
+
+        .verso-panel {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 50%;
+            padding: 3rem 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all var(--duration) var(--ease-custom);
+        }
+
+        /* Form Panels (Cream) */
+        .verso-panel--login-form {
+            left: 0;
+            opacity: 1;
+            transform: translateX(0);
+            z-index: 5;
+        }
+        .verso-card.is-register .verso-panel--login-form {
+            opacity: 0;
+            transform: translateX(-40px);
+            pointer-events: none;
+        }
+
+        .verso-panel--register-form {
+            right: 0;
+            opacity: 0;
+            transform: translateX(40px);
+            pointer-events: none;
+            z-index: 5;
+        }
+        .verso-card.is-register .verso-panel--register-form {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        /* Text Panels (Green) */
+        .verso-panel--login-text {
+            right: 0;
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .verso-card.is-register .verso-panel--login-text {
+            opacity: 0;
+            transform: translateX(40px);
+        }
+
+        .verso-panel--register-text {
+            left: 0;
+            opacity: 0;
+            transform: translateX(-40px);
+        }
+        .verso-card.is-register .verso-panel--register-text {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .verso-label-small {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--v-gold);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .verso-heading {
+            font-family: var(--font-serif);
+            font-size: 3.2rem;
+            line-height: 1.1;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+        }
+
+        .verso-heading em {
+            font-style: italic;
+            color: var(--v-cream-sec);
+        }
+
+        .verso-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: rgba(244, 240, 229, 0.8);
+            max-width: 85%;
+        }
+
+        .verso-form-title {
+            font-size: 1.75rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            color: var(--v-text-dark);
+        }
+
+        .verso-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            position: relative;        }
+
+        /* ==========================================
+           ANIMASI SCANNER
+           ========================================== */
+        .verso-scanner {
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 10;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .verso-scanner.is-active {
+            display: block;
+        }
+
+        .verso-scanner-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--v-green-light);
+            box-shadow: 0 0 15px 3px rgba(20, 83, 66, 0.4), 
+                        0 -30px 40px 10px rgba(20, 83, 66, 0.1); /* Efek ekor cahaya (tail) */
+            opacity: 0;
+            transform: translateY(0);
+        }
+
+        .verso-scanner.is-active .verso-scanner-line {
+            /* Sweep ke bawah dengan timing curve modern */
+            animation: versoScanSweep 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes versoScanSweep {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            85% { opacity: 1; top: 100%; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .verso-input-group {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .verso-input-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--v-text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .verso-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--v-border);
+            padding: 0.5rem 0;
+            font-size: 1rem;
+            color: var(--v-text-dark);
+            transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            font-family: inherit;
+        }
+
+        .verso-input:focus {
+            outline: none;
+            border-bottom-color: var(--v-green-panel);
+        }
+
+        .verso-input.is-scanned {
+            border-bottom-color: var(--v-green-light);
+            background-color: rgba(20, 83, 66, 0.04);
+            box-shadow: 0 2px 10px rgba(20, 83, 66, 0.08);
+            border-radius: 4px 4px 0 0;
+        }
+
+        .verso-input::placeholder {
+            color: transparent; /* Keep layout, hide text if using floating labels, but we use static labels here */
+        }
+
+        .verso-pwd-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .verso-pwd-wrapper input {
+            padding-right: 30px; /* Space for icon */
+        }
+
+        .verso-pwd-toggle {
+            position: absolute;
+            right: 0;
+            bottom: 0.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--v-text-muted);
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease;
+        }
+
+        .verso-pwd-toggle:hover {
+            color: var(--v-text-dark);
+        }
+
+        .verso-pwd-toggle svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .verso-pwd-toggle .icon-hide { display: none; }
+        .verso-pwd-toggle.is-visible .icon-show { display: none; }
+        .verso-pwd-toggle.is-visible .icon-hide { display: block; }
+
+        .verso-form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .verso-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            color: var(--v-text-muted);
+        }
+
+        .verso-checkbox-label input {
+            accent-color: var(--v-green-panel);
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
+
+        .verso-link {
+            color: var(--v-text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .verso-link:hover {
+            color: var(--v-green-light);
+        }
+
+        .verso-btn {
+            background-color: var(--v-green-panel);
+            color: var(--v-text-light);
+            border: none;
+            border-radius: 99px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            font-family: inherit;
+        }
+
+        .verso-btn:hover {
+            background-color: var(--v-green-hover);
+        }
+
+        .verso-btn:active {
+            transform: scale(0.98);
+        }
+
+        .verso-form-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--v-text-muted);
+        }
+
+        @media (max-width: 900px) {
+            .verso-panel { padding: 2.5rem; }
+            .verso-heading { font-size: 2.5rem; }
+        }
+
+        @media (max-width: 768px) {
+            .verso-card {
+                flex-direction: column;
+                height: 750px;
+                max-width: 480px;
+            }
+
+            /* Shift to Vertical Split Logic for Mobile */
+            .verso-panel {
+                width: 100%;
+                height: 50%;
+                padding: 2.5rem;
+                align-items: center;
+                text-align: center;
+            }
+
+            .verso-description { max-width: 100%; }
+
+            /* Layer definitions for mobile */
+            .verso-layer-overlay {
+                /* Mask covers Top Half */
+                clip-path: polygon(0 -50%, 100% -50%, 100% calc(50% + var(--skew-y)), 0 calc(50% - var(--skew-y)));
+            }
+
+            .verso-card.is-register .verso-layer-overlay {
+                /* Mask covers Bottom Half */
+                clip-path: polygon(0 calc(50% - var(--skew-y)), 100% calc(50% + var(--skew-y)), 100% 150%, 0 150%);
+            }
+
+            /* Panel routing for mobile */
+            /* Login Form (Cream, Bottom) */
+            .verso-panel--login-form { top: 50%; transform: translateY(0); }
+            .verso-card.is-register .verso-panel--login-form { transform: translateY(40px); }
+
+            /* Register Form (Cream, Top) */
+            .verso-panel--register-form { top: 0; transform: translateY(-40px); }
+            .verso-card.is-register .verso-panel--register-form { transform: translateY(0); }
+
+            /* Login Text (Green, Top) */
+            .verso-panel--login-text { top: 0; transform: translateY(0); }
+            .verso-card.is-register .verso-panel--login-text { transform: translateY(-40px); }
+
+            /* Register Text (Green, Bottom) */
+            .verso-panel--register-text { top: 50%; transform: translateY(40px); }
+            .verso-card.is-register .verso-panel--register-text { transform: translateY(0); }
+        }
+        
+        @media (max-width: 480px) {
+            .verso-main { padding: 1rem; }
+            .verso-card { height: 800px; border-radius: 16px; }
+            .verso-heading { font-size: 2.2rem; }
+            .verso-panel { padding: 2rem 1.5rem; }
+        }
     </style>
 </head>
-<body class="bg-dark text-white font-sans antialiased overflow-x-hidden">
+<body>
 
-    <!-- ======================================================== -->
-    <!-- BAGIAN 1: DASHBOARD TRIAL (LOGIN & MASTER FORM)          -->
-    <!-- ======================================================== -->
-    <div id="view-dashboard" class="min-h-screen flex items-center justify-center p-6 relative z-50 bg-neutral-950">
-        <div class="w-full max-w-xl bg-neutral-900 border border-gold-400/30 p-8 rounded-3xl shadow-2xl">
-            <h1 class="text-2xl font-bold text-gold-400 mb-1 text-center font-cinzel">SaaS Builder Trial</h1>
-            <p class="text-neutral-400 text-xs text-center mb-6">Uji Coba Alur: Login ➔ Isi Data ➔ Bayar ➔ Buka Template Mewah</p>
+<header class="verso-header">
+    <div class="verso-brand">VERSO <span>/</span> EDITION</div>
+    <div>EN</div>
+</header>
 
-            <!-- Step A: Simulasi Login -->
-            <div id="auth-box" class="space-y-4 mb-6 pb-6 border-b border-neutral-800">
-                <h2 class="text-xs font-semibold uppercase tracking-wider text-gold-300">1. Masuk / Daftar Akun</h2>
-                <div>
-                    <label class="block text-xs text-neutral-400 mb-1">Email Anda</label>
-                    <input type="email" id="input-email" placeholder="latif@email.com" class="w-full bg-neutral-950 border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-gold-400 outline-none">
-                </div>
-                <button onclick="simulateLogin()" class="w-full bg-neutral-800 hover:bg-neutral-700 text-gold-300 border border-gold-400/40 text-xs font-bold py-2.5 rounded-lg transition cursor-pointer">
-                    Masuk ke Sistem (Supabase Auth)
-                </button>
-            </div>
-
-            <!-- Step B: Master Form (Terkunci sebelum login) -->
-            <div id="form-box" class="space-y-4 opacity-40 pointer-events-none transition-opacity">
-                <h2 class="text-xs font-semibold uppercase tracking-wider text-gold-300">2. Isi Data Undangan</h2>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs text-neutral-400 mb-1">Nama Pria</label>
-                        <input type="text" id="form-pria" value="Moh. Latif, S.Kom" class="w-full bg-neutral-950 border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-gold-400 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-neutral-400 mb-1">Nama Wanita</label>
-                        <input type="text" id="form-wanita" value="Nanda Putri, S.Pd" class="w-full bg-neutral-950 border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-gold-400 outline-none">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs text-neutral-400 mb-1">Tanggal Acara</label>
-                    <input type="text" id="form-tanggal" value="KAMIS, 25 DESEMBER 2026" class="w-full bg-neutral-950 border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-gold-400 outline-none">
-                </div>
-                
-                <!-- Tombol Pembayaran Simulasi Midtrans -->
-                <button onclick="simulatePayment()" class="w-full bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 text-dark font-bold py-3 rounded-xl transition text-xs tracking-wider uppercase shadow-lg shadow-gold-500/20 cursor-pointer font-cinzel">
-                    Simpan & Bayar Trial (Rp5.000)
-                </button>
-            </div>
-            <p id="status-info" class="text-xs text-center text-gold-300 mt-4 font-mono"></p>
+<main class="verso-main">
+    <div class="verso-titles">
+        <div class="verso-page-title">
+            <p>Login & Signup</p>
+            <h1>Animation</h1>
         </div>
     </div>
 
-
-    <!-- ======================================================== -->
-    <!-- BAGIAN 2: TEMPLATE HTML MEWAHMU (SEMUA ANIMASI & WAYANG) -->
-    <!-- ======================================================== -->
-    <div id="view-template" class="hidden relative z-40">
-
-        <!-- TAHAP 1: CINEMATIC INTRO -->
-        <div id="stage-1" class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center transition-opacity duration-1000">
-            <div id="intro-step-1" class="absolute opacity-0 text-center px-4">
-                <p class="text-gold-300 font-cinzel tracking-[0.4em] text-sm md:text-xl uppercase font-semibold">The Wedding of</p>
-            </div>
-            <div id="intro-step-2" class="absolute opacity-0 text-center px-4">
-                <h1 id="intro-names" class="text-gold-300 font-cinzel tracking-[0.3em] text-xl md:text-3xl uppercase font-semibold">Latif & Nanda</h1>
-            </div>
-        </div>
-
-        <!-- TAHAP 2: COVER UTAMA -->
-        <div id="stage-2" class="fixed inset-0 z-40 bg-cover bg-center flex flex-col items-center justify-between p-6 opacity-0 pointer-events-none transition-opacity duration-1000" style="background-image: url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1920');">
-            <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/55 to-black/85"></div>
-            <div class="relative z-10 text-center pt-12 animate-fade-in-slow">
-                <p class="text-gold-300 font-cinzel tracking-[0.3em] text-xs uppercase mb-3">The Wedding Celebration</p>
-                <!-- Nama Dinamis dari Form -->
-                <h2 id="cover-couple-name" class="text-gold-400 font-script text-6xl md:text-8xl mb-4">Latif & Nanda</h2>
-                <div class="w-20 h-[1px] bg-gold-400/70 mx-auto mb-6"></div>
-                <p class="text-neutral-200 text-xs bg-black/50 px-6 py-2 rounded-full border border-gold-400/30 inline-block">
-                    Special Invitation for You
-                </p>
-            </div>
-            <div class="relative z-10 text-center max-w-xl mx-auto pb-12">
-                <button id="open-btn" class="inline-flex items-center gap-3 px-9 py-4 bg-gradient-to-r from-gold-500 to-gold-600 text-dark font-cinzel font-bold text-xs tracking-[0.2em] uppercase rounded-full shadow-xl hover:scale-105 transition cursor-pointer">
-                    <i class="fa-solid fa-envelope-open-text"></i> Open Invitation
-                </button>
-            </div>
-        </div>
-
-        <!-- TAHAP 3: GUNUNGAN WAYANG & KELOPAK MAWAR -->
-        <div id="stage-3-overlay" class="fixed inset-0 z-30 pointer-events-none hidden flex overflow-hidden">
-            <canvas id="rose-canvas" class="absolute inset-0 z-35 pointer-events-none w-full h-full"></canvas>
-            <div id="gunungan-left" class="w-1/2 h-full bg-gradient-to-r from-neutral-950 to-neutral-900 border-r border-gold-400/40 relative z-30 transition-transform duration-[2200ms] ease-in-out"></div>
-            <div id="gunungan-right" class="w-1/2 h-full bg-gradient-to-l from-neutral-950 to-neutral-900 border-l border-gold-400/40 relative z-30 transition-transform duration-[2200ms] ease-in-out"></div>
-        </div>
-
-        <!-- MAIN INVITATION CONTENT -->
-        <main id="main-content" class="opacity-0 transition-opacity duration-1000 min-h-screen relative z-20">
-            <section class="relative min-h-screen flex flex-col items-center justify-center text-center p-6 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=1920');">
-                <div class="absolute inset-0 bg-dark/75"></div>
-                <div class="relative z-10 max-w-3xl mx-auto py-20">
-                    <span class="text-gold-300 font-cinzel tracking-[0.35em] uppercase text-xs block mb-4">The Wedding Celebration</span>
-                    <h1 id="main-couple-name" class="text-gold-400 font-script text-7xl md:text-9xl mb-6">Latif & Nanda</h1>
-                    <p id="main-date" class="text-neutral-300 font-cinzel tracking-widest text-sm md:text-lg mb-10 font-semibold">KAMIS, 25 DESEMBER 2026</p>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- SCRIPT PENGHUBUNG ALUR & ANIMASI -->
-    <script>
-        let globalData = { pria: "Latif", wanita: "Nanda", tanggal: "KAMIS, 25 DESEMBER 2026" };
-
-        function simulateLogin() {
-            const email = document.getElementById('input-email').value;
-            if(!email) { alert("Masukkan email dulu!"); return; }
+    <div class="verso-card" id="versoCard">
+        
+        <!-- Base Layer (Cream Background) -->
+        <div class="verso-layer-base">
             
-            document.getElementById('auth-box').style.opacity = '0.5';
-            document.getElementById('form-box').classList.remove('opacity-40', 'pointer-events-none');
-            document.getElementById('status-info').textContent = "✓ Login Berhasil sebagai: " + email;
+            <!-- LOGIN FORM (Left on Desktop, Bottom on Mobile) -->
+            <div class="verso-panel verso-panel--login-form">
+                <h2 class="verso-form-title">Sign in</h2>
+                <form class="verso-form" id="loginForm">
+                    <div class="verso-scanner"><div class="verso-scanner-line"></div></div>
+                    
+                    <div class="verso-input-group">
+                        <label class="verso-input-label" for="loginEmail">Username or email</label>
+                        <input type="text" id="loginEmail" class="verso-input" autocomplete="username" required>
+                    </div>
+
+                    <div class="verso-input-group">
+                        <label class="verso-input-label" for="loginPwd">Password</label>
+                        <div class="verso-pwd-wrapper">
+                            <input type="password" id="loginPwd" class="verso-input" autocomplete="current-password" required>
+                            <button type="button" class="verso-pwd-toggle" aria-label="Toggle password visibility">
+                                <!-- Eye Show Icon -->
+                                <svg class="icon-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <!-- Eye Hide Icon -->
+                                <svg class="icon-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="verso-form-options">
+                        <label class="verso-checkbox-label">
+                            <input type="checkbox" checked> Keep me signed in
+                        </label>
+                        <a href="#" class="verso-link">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="verso-btn">Sign in</button>
+
+                    <div class="verso-form-footer">
+                        New to VERSO? <a href="#" class="verso-link" id="btnToRegister">Create an account</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- REGISTER FORM (Right on Desktop, Top on Mobile) -->
+            <div class="verso-panel verso-panel--register-form">
+                <h2 class="verso-form-title">Create account</h2>
+                <form class="verso-form" id="registerForm">
+                    <div class="verso-scanner"><div class="verso-scanner-line"></div></div>
+                    
+                    <div class="verso-input-group">
+                        <label class="verso-input-label" for="regName">Full name</label>
+                        <input type="text" id="regName" class="verso-input" autocomplete="name" required>
+                    </div>
+
+                    <div class="verso-input-group">
+                        <label class="verso-input-label" for="regEmail">Email address</label>
+                        <input type="email" id="regEmail" class="verso-input" autocomplete="email" required>
+                    </div>
+
+                    <div class="verso-input-group">
+                        <label class="verso-input-label" for="regPwd">Password</label>
+                        <div class="verso-pwd-wrapper">
+                            <input type="password" id="regPwd" class="verso-input" autocomplete="new-password" required>
+                            <button type="button" class="verso-pwd-toggle" aria-label="Toggle password visibility">
+                                <svg class="icon-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <svg class="icon-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="verso-btn">Create account</button>
+
+                    <div class="verso-form-footer">
+                        Already have an account? <a href="#" class="verso-link" id="btnToLogin">Sign in</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Overlay Layer (Green Background & Mask) -->
+        <div class="verso-layer-overlay">
+            
+            <!-- REGISTER TEXT (Left on Desktop, Bottom on Mobile) -->
+            <div class="verso-panel verso-panel--register-text">
+                <span class="verso-label-small">Your next chapter</span>
+                <h2 class="verso-heading">Start the <br><em>first page.</em></h2>
+                <p class="verso-description">Create your space. Keep your ideas, drafts and people together in one secure place.</p>
+            </div>
+
+            <!-- LOGIN TEXT (Right on Desktop, Top on Mobile) -->
+            <div class="verso-panel verso-panel--login-text">
+                <span class="verso-label-small">Welcome back</span>
+                <h2 class="verso-heading">Welcome <br><em>back.</em></h2>
+                <p class="verso-description">Your boards, your drafts and your people are exactly where you left them.</p>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<script>
+    // ======================================================================
+    // KONFIGURASI UTAMA VERSO (UBAH TEKS, NAMA BRAND, DAN GAMBAR DI SINI)
+    // ======================================================================
+    const VERSO_CONFIG = {
+        // UBAH NAMA BRAND DI SINI
+        brand: {
+            name: "VERSO",
+            edition: "EDITION",
+            // UBAH URL LOGO DI SINI (kosongkan "" jika hanya ingin menggunakan teks)
+            logoUrl: "" // Contoh: "https://logo.clearbit.com/github.com" atau "assets/logo.png"
+        },
+        
+        // UBAH TEKS HEADER DI SINI
+        header: {
+            pageSubtitle: "Login & Signup",
+            mainTitle: "Animation"
+        },
+        
+        // UBAH GAMBAR PANEL DI SINI (Opsional, gunakan URL atau path lokal)
+        // Gambar ini akan melebur dengan warna hijau panel secara elegan.
+        images: {
+            loginBgUrl: "",    // Contoh: "https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=800"
+            registerBgUrl: ""  // Kosongkan jika ingin warna solid saja
+        },
+        
+        // UBAH TEKS LOGIN DI SINI
+        login: {
+            formTitle: "Sign in",
+            usernameLabel: "Username or email",
+            passwordLabel: "Password",
+            keepSignedIn: "Keep me signed in",
+            forgotPassword: "Forgot password?",
+            submitButton: "Sign in",
+            footerText: "New to VERSO?",
+            footerLink: "Create an account",
+            // Teks panel sambutan (ketika login aktif, panel ini di kanan)
+            welcomeLabel: "Welcome back",
+            welcomeTitleHtml: "Welcome <br><em>back.</em>", // Mendukung tag HTML seperti <br> dan <em>
+            welcomeDesc: "Your boards, your drafts and your people are exactly where you left them."
+        },
+        
+        // UBAH TEKS REGISTER DI SINI
+        register: {
+            formTitle: "Create account",
+            nameLabel: "Full name",
+            emailLabel: "Email address",
+            passwordLabel: "Password",
+            submitButton: "Create account",
+            footerText: "Already have an account?",
+            footerLink: "Sign in",
+            // Teks panel sambutan (ketika register aktif, panel ini di kiri)
+            welcomeLabel: "Your next chapter",
+            welcomeTitleHtml: "Start the <br><em>first page.</em>",
+            welcomeDesc: "Create your space. Keep your ideas, drafts and people together in one secure place."
         }
+    };
 
-        function simulatePayment() {
-            // Ambil data dari form
-            globalData.pria = document.getElementById('form-pria').value;
-            globalData.wanita = document.getElementById('form-wanita').value;
-            globalData.tanggal = document.getElementById('form-tanggal').value;
-
-            // Masukkan data ke template mewahmu
-            const combinedNames = globalData.pria + " & " + globalData.wanita;
-            document.getElementById('intro-names').textContent = combinedNames;
-            document.getElementById('cover-couple-name').textContent = combinedNames;
-            document.getElementById('main-couple-name').textContent = combinedNames;
-            document.getElementById('main-date').textContent = globalData.tanggal;
-
-            // Simulasi Midtrans Popup
-            alert("Simulasi Midtrans: Pembayaran Rp5.000 Berhasil! Status undangan aktif.");
-
-            // Sembunyikan Dashboard, Munculkan Template Mewahmu
-            document.getElementById('view-dashboard').style.display = 'none';
-            document.getElementById('view-template').classList.remove('hidden');
-
-            // Jalankan Animasi Intro Cinzel
-            runCinematicIntro();
-        }
-
-        function runCinematicIntro() {
-            const stage1 = document.getElementById('stage-1');
-            const step1 = document.getElementById('intro-step-1');
-            const step2 = document.getElementById('intro-step-2');
-            const stage2 = document.getElementById('stage-2');
-
-            setTimeout(() => { step1.classList.add('animate-intro-1'); }, 400);
-            setTimeout(() => { step2.classList.add('animate-intro-2'); }, 3600);
-            setTimeout(() => {
-                stage1.style.opacity = '0';
-                setTimeout(() => {
-                    stage1.remove();
-                    stage2.classList.remove('opacity-0', 'pointer-events-none');
-                }, 1000);
-            }, 7400);
-        }
-
-        // Tombol Buka Undangan & Gunungan Wayang
-        document.addEventListener('click', function(e) {
-            if(e.target && e.target.id === 'open-btn') {
-                const stage2 = document.getElementById('stage-2');
-                const stage3Overlay = document.getElementById('stage-3-overlay');
-                const gununganLeft = document.getElementById('gunungan-left');
-                const gununganRight = document.getElementById('gunungan-right');
-                const mainContent = document.getElementById('main-content');
-
-                stage2.style.opacity = '0';
-                stage2.style.pointerEvents = 'none';
-                stage3Overlay.classList.remove('hidden');
-
-                requestAnimationFrame(() => {
-                    gununganLeft.style.transform = 'translateX(-100%)';
-                    gununganRight.style.transform = 'translateX(100%)';
-                });
-
-                setTimeout(() => {
-                    mainContent.style.opacity = '1';
-                    stage3Overlay.remove();
-                    window.scrollTo(0, 0);
-                }, 2200);
+    function applyVersoConfig() {
+        try {
+            // 1. Setup Brand & Header
+            const brandEl = document.querySelector('.verso-brand');
+            if (VERSO_CONFIG.brand.logoUrl) {
+                const img = document.createElement('img');
+                img.src = VERSO_CONFIG.brand.logoUrl;
+                img.alt = VERSO_CONFIG.brand.name;
+                img.style.maxHeight = '20px';
+                img.style.display = 'block';
+                // Jika gambar gagal dimuat, kembalikan ke teks asli dengan aman
+                img.onerror = () => { 
+                    img.style.display = 'none'; 
+                    brandEl.innerHTML = `${VERSO_CONFIG.brand.name} <span>/</span> ${VERSO_CONFIG.brand.edition}`; 
+                };
+                brandEl.innerHTML = '';
+                brandEl.appendChild(img);
+            } else {
+                brandEl.innerHTML = `${VERSO_CONFIG.brand.name} <span>/</span> ${VERSO_CONFIG.brand.edition}`;
             }
+
+            const pageTitle = document.querySelector('.verso-page-title');
+            pageTitle.querySelector('p').textContent = VERSO_CONFIG.header.pageSubtitle;
+            pageTitle.querySelector('h1').textContent = VERSO_CONFIG.header.mainTitle;
+
+            // Safe text setter to prevent null reference errors
+            const setSafeText = (parent, selector, text) => {
+                const el = parent ? parent.querySelector(selector) : null;
+                if (el) el.textContent = text;
+            };
+
+            // 2. Setup Login Form
+            const loginForm = document.querySelector('.verso-panel--login-form');
+            setSafeText(loginForm, '.verso-form-title', VERSO_CONFIG.login.formTitle);
+            setSafeText(loginForm, 'label[for="loginEmail"]', VERSO_CONFIG.login.usernameLabel);
+            setSafeText(loginForm, 'label[for="loginPwd"]', VERSO_CONFIG.login.passwordLabel);
+            
+            const keepMeLabel = loginForm.querySelector('.verso-checkbox-label');
+            if(keepMeLabel && keepMeLabel.lastChild && keepMeLabel.lastChild.nodeType === Node.TEXT_NODE) keepMeLabel.lastChild.textContent = ' ' + VERSO_CONFIG.login.keepSignedIn;
+            
+            setSafeText(loginForm, '.verso-link', VERSO_CONFIG.login.forgotPassword);
+            setSafeText(loginForm, '.verso-btn', VERSO_CONFIG.login.submitButton);
+            
+            const loginFooter = loginForm.querySelector('.verso-form-footer');
+            if(loginFooter && loginFooter.childNodes[0] && loginFooter.childNodes[0].nodeType === Node.TEXT_NODE) loginFooter.childNodes[0].nodeValue = VERSO_CONFIG.login.footerText + ' ';
+            setSafeText(loginForm, '#btnToRegister', VERSO_CONFIG.login.footerLink);
+
+            // 3. Setup Register Form
+            const regForm = document.querySelector('.verso-panel--register-form');
+            setSafeText(regForm, '.verso-form-title', VERSO_CONFIG.register.formTitle);
+            setSafeText(regForm, 'label[for="regName"]', VERSO_CONFIG.register.nameLabel);
+            setSafeText(regForm, 'label[for="regEmail"]', VERSO_CONFIG.register.emailLabel);
+            setSafeText(regForm, 'label[for="regPwd"]', VERSO_CONFIG.register.passwordLabel);
+            setSafeText(regForm, '.verso-btn', VERSO_CONFIG.register.submitButton);
+            
+            const regFooter = regForm.querySelector('.verso-form-footer');
+            if(regFooter && regFooter.childNodes[0] && regFooter.childNodes[0].nodeType === Node.TEXT_NODE) regFooter.childNodes[0].nodeValue = VERSO_CONFIG.register.footerText + ' ';
+            setSafeText(regForm, '#btnToLogin', VERSO_CONFIG.register.footerLink);
+
+            // 4. Setup Welcome Texts (Green Panels)
+            const loginText = document.querySelector('.verso-panel--login-text');
+            loginText.querySelector('.verso-label-small').textContent = VERSO_CONFIG.login.welcomeLabel;
+            loginText.querySelector('.verso-heading').innerHTML = VERSO_CONFIG.login.welcomeTitleHtml;
+            loginText.querySelector('.verso-description').textContent = VERSO_CONFIG.login.welcomeDesc;
+
+            const regText = document.querySelector('.verso-panel--register-text');
+            regText.querySelector('.verso-label-small').textContent = VERSO_CONFIG.register.welcomeLabel;
+            regText.querySelector('.verso-heading').innerHTML = VERSO_CONFIG.register.welcomeTitleHtml;
+            regText.querySelector('.verso-description').textContent = VERSO_CONFIG.register.welcomeDesc;
+
+            // 5. Setup Optional Background Images
+            const setupBgImage = (panel, url) => {
+                if (url) {
+                    const bg = document.createElement('div');
+                    bg.style.position = 'absolute';
+                    bg.style.inset = '0';
+                    bg.style.zIndex = '-1'; 
+                    bg.style.backgroundImage = `url('${url}')`;
+                    bg.style.backgroundSize = 'cover';
+                    bg.style.backgroundPosition = 'center';
+                    // Blending mode memberikan efek premium tanpa menutupi warna hijau asli
+                    bg.style.opacity = '0.25'; 
+                    bg.style.mixBlendMode = 'overlay'; 
+                    
+                    const imgTest = new Image();
+                    imgTest.src = url;
+                    imgTest.onload = () => {
+                        // Hanya tambahkan elemen background jika gambar berhasil dimuat
+                        panel.appendChild(bg);
+                    };
+                }
+            };
+
+            setupBgImage(loginText, VERSO_CONFIG.images.loginBgUrl);
+            setupBgImage(regText, VERSO_CONFIG.images.registerBgUrl);
+
+        } catch (e) {
+            console.error("Verso Configuration Error:", e);
+            // Fallback akan menggunakan HTML yang ada jika terjadi error konfigurasi
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Terapkan konfigurasi terlebih dahulu
+        applyVersoConfig();
+        
+        const card = document.getElementById('versoCard');
+        const btnToRegister = document.getElementById('btnToRegister');
+        const btnToLogin = document.getElementById('btnToLogin');
+        const pwdToggles = document.querySelectorAll('.verso-pwd-toggle');
+        const forms = document.querySelectorAll('form');
+
+        // Handle transitions
+        btnToRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Add class to trigger CSS clip-path and transform animations
+            card.classList.add('is-register');
         });
-    </script>
+
+        btnToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Remove class to revert back
+            card.classList.remove('is-register');
+        });
+
+        // Handle password visibility toggles
+        pwdToggles.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Find the input element right before this button
+                const input = this.previousElementSibling;
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    this.classList.add('is-visible');
+                } else {
+                    input.type = 'password';
+                    this.classList.remove('is-visible');
+                }
+            });
+        });
+
+        // Prevent actual form submissions for demonstration purposes
+        forms.forEach(form => {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // 1. Validasi Bawaan (Pastikan input diisi dengan format yang benar)
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                const btn = form.querySelector('.verso-btn');
+                
+                // Cegah spam klik yang bisa merusak animasi
+                if (btn.disabled) return;
+                btn.disabled = true;
+                
+                const originalText = btn.innerText;
+                const scanner = form.querySelector('.verso-scanner');
+                const inputs = form.querySelectorAll('.verso-input');
+                const formHeight = form.offsetHeight;
+
+                // 3. Fungsi memproses "Demo Submit" setelah animasi scanner selesai
+                const processSubmit = () => {
+                    btn.innerText = 'Processing...';
+                    btn.style.opacity = '0.8';
+                    btn.style.pointerEvents = 'none';
+
+                    setTimeout(() => {
+                        btn.innerText = originalText;
+                        btn.style.opacity = '1';
+                        btn.style.pointerEvents = 'auto';
+                        btn.disabled = false;
+                        
+                        // Optional: Show brief success state
+                        const footer = form.querySelector('.verso-form-footer');
+                        const oldFooterHtml = footer.innerHTML;
+                        footer.innerHTML = `<span style="color: var(--v-green-panel); font-weight: 500;">Success! (Demo only)</span>`;
+                        
+                        setTimeout(() => {
+                            footer.innerHTML = oldFooterHtml;
+                            // Re-attach listeners to dynamic buttons
+                            if (originalText === 'Sign in' || (typeof VERSO_CONFIG !== 'undefined' && originalText === VERSO_CONFIG.login.submitButton)) {
+                                const regBtn = document.getElementById('btnToRegister');
+                                if(regBtn) regBtn.addEventListener('click', (ev) => { ev.preventDefault(); card.classList.add('is-register'); });
+                            } else {
+                                const logBtn = document.getElementById('btnToLogin');
+                                if(logBtn) logBtn.addEventListener('click', (ev) => { ev.preventDefault(); card.classList.remove('is-register'); });
+                            }
+                        }, 2000);
+                    }, 1000);
+                };
+
+                // 2. Mainkan Animasi Scanner
+                if (scanner) {
+                    scanner.classList.add('is-active');
+                    
+                    // Mainkan kalkulasi sorot efek cahaya (highlight) berjejer ke bawah
+                    inputs.forEach(input => {
+                        const inputTop = input.offsetTop;
+                        // Durasi visual sweep hingga 100% tercapai sekitar 85% dari total animasi 1200ms = ~1020ms
+                        const hitTime = (inputTop / formHeight) * 1020;
+                        
+                        setTimeout(() => {
+                            input.classList.add('is-scanned');
+                            setTimeout(() => {
+                                input.classList.remove('is-scanned');
+                            }, 450); // Lama field menyala
+                        }, hitTime);
+                    });
+
+                    // Teruskan ke simulasi proses server (setelah 1.2s usai sweep hilang)
+                    setTimeout(() => {
+                        scanner.classList.remove('is-active');
+                        processSubmit();
+                    }, 1300);
+                } else {
+                    // Fallback aman
+                    processSubmit();
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 </html>
