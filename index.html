@@ -456,57 +456,102 @@
         }
 
         @media (max-width: 768px) {
-            .verso-card {
-                flex-direction: column;
-                height: 750px;
-                max-width: 480px;
+            /* Perbaiki area main agar bisa discroll di layar HP tanpa memotong bagian atas */
+            .verso-main {
+                justify-content: flex-start;
+                padding-top: 2rem;
+                padding-bottom: 4rem;
             }
 
-            /* Shift to Vertical Split Logic for Mobile */
+            .verso-card {
+                flex-direction: column;
+                height: 840px; /* Tinggi pasti dan memadai agar form tidak terpotong sama sekali */
+                flex-shrink: 0;
+                max-width: 480px;
+                margin: 0 auto;
+            }
+
             .verso-panel {
                 width: 100%;
-                height: 50%;
                 padding: 2.5rem;
                 align-items: center;
                 text-align: center;
             }
 
-            .verso-description { max-width: 100%; }
+            .verso-form {
+                width: 100%;
+                max-width: 360px;
+                margin: 0 auto;
+            }
 
-            /* Layer definitions for mobile */
+            .verso-description { max-width: 100%; font-size: 0.95rem; }
+
+            /* Layer definitions for mobile: PEMISAH HORIZONTAL LURUS */
             .verso-layer-overlay {
-                /* Mask covers Top Half */
-                clip-path: polygon(0 -50%, 100% -50%, 100% calc(50% + var(--skew-y)), 0 calc(50% - var(--skew-y)));
+                /* Mode Login: Mask kotak di bagian ATAS (30% area) */
+                clip-path: polygon(0 0%, 100% 0%, 100% 30%, 0 30%);
+                box-shadow: inset 0 -20px 40px rgba(0,0,0,0.1);
             }
 
             .verso-card.is-register .verso-layer-overlay {
-                /* Mask covers Bottom Half */
-                clip-path: polygon(0 calc(50% - var(--skew-y)), 100% calc(50% + var(--skew-y)), 100% 150%, 0 150%);
+                /* Mode Register: Mask kotak di bagian BAWAH (30% area) */
+                clip-path: polygon(0 70%, 100% 70%, 100% 100%, 0 100%);
+                box-shadow: inset 0 20px 40px rgba(0,0,0,0.1);
             }
 
             /* Panel routing for mobile */
-            /* Login Form (Cream, Bottom) */
-            .verso-panel--login-form { top: 50%; transform: translateY(0); }
+            
+            /* Login Form (Krem, Area Bawah 70%) */
+            .verso-panel--login-form { 
+                top: 30%; 
+                height: 70%; 
+                transform: translateY(0); 
+                justify-content: center;
+            }
             .verso-card.is-register .verso-panel--login-form { transform: translateY(40px); }
 
-            /* Register Form (Cream, Top) */
-            .verso-panel--register-form { top: 0; transform: translateY(-40px); }
+            /* Register Form (Krem, Area Atas 70%) */
+            .verso-panel--register-form { 
+                top: 0; 
+                height: 70%; 
+                transform: translateY(-40px); 
+                justify-content: center;
+            }
             .verso-card.is-register .verso-panel--register-form { transform: translateY(0); }
 
-            /* Login Text (Green, Top) */
-            .verso-panel--login-text { top: 0; transform: translateY(0); }
-            .verso-card.is-register .verso-panel--login-text { transform: translateY(-40px); }
+            /* Login Text (Hijau, Area Atas 30%) */
+            .verso-panel--login-text { 
+                top: 0; 
+                height: 30%; 
+                transform: translateY(0); 
+                justify-content: center;
+            }
+            .verso-card.is-register .verso-panel--login-text { transform: translateY(-30px); }
 
-            /* Register Text (Green, Bottom) */
-            .verso-panel--register-text { top: 50%; transform: translateY(40px); }
+            /* Register Text (Hijau, Area Bawah 30%) */
+            .verso-panel--register-text { 
+                top: 70%; 
+                height: 30%; 
+                transform: translateY(30px); 
+                justify-content: center;
+            }
             .verso-card.is-register .verso-panel--register-text { transform: translateY(0); }
         }
         
         @media (max-width: 480px) {
-            .verso-main { padding: 1rem; }
-            .verso-card { height: 800px; border-radius: 16px; }
-            .verso-heading { font-size: 2.2rem; }
-            .verso-panel { padding: 2rem 1.5rem; }
+            .verso-main { padding: 1.5rem 1rem 3rem 1rem; }
+            .verso-card { height: 860px; border-radius: 20px; }
+            .verso-heading { font-size: 2rem; margin-bottom: 1rem; }
+            .verso-panel { padding: 1.5rem; }
+            
+            /* Pada layar sangat kecil, berikan proporsi lebih besar untuk formulir krem (72%) */
+            .verso-layer-overlay { clip-path: polygon(0 0%, 100% 0%, 100% 28%, 0 28%); }
+            .verso-card.is-register .verso-layer-overlay { clip-path: polygon(0 72%, 100% 72%, 100% 100%, 0 100%); }
+            
+            .verso-panel--login-form { top: 28%; height: 72%; }
+            .verso-panel--register-form { top: 0; height: 72%; }
+            .verso-panel--login-text { top: 0; height: 28%; }
+            .verso-panel--register-text { top: 72%; height: 28%; }
         }
     </style>
 </head>
@@ -686,77 +731,99 @@
 
     function applyVersoConfig() {
         try {
-            // 1. Setup Brand & Header
-            const brandEl = document.querySelector('.verso-brand');
-            if (VERSO_CONFIG.brand.logoUrl) {
-                const img = document.createElement('img');
-                img.src = VERSO_CONFIG.brand.logoUrl;
-                img.alt = VERSO_CONFIG.brand.name;
-                img.style.maxHeight = '20px';
-                img.style.display = 'block';
-                // Jika gambar gagal dimuat, kembalikan ke teks asli dengan aman
-                img.onerror = () => { 
-                    img.style.display = 'none'; 
-                    brandEl.innerHTML = `${VERSO_CONFIG.brand.name} <span>/</span> ${VERSO_CONFIG.brand.edition}`; 
-                };
-                brandEl.innerHTML = '';
-                brandEl.appendChild(img);
-            } else {
-                brandEl.innerHTML = `${VERSO_CONFIG.brand.name} <span>/</span> ${VERSO_CONFIG.brand.edition}`;
-            }
-
-            const pageTitle = document.querySelector('.verso-page-title');
-            pageTitle.querySelector('p').textContent = VERSO_CONFIG.header.pageSubtitle;
-            pageTitle.querySelector('h1').textContent = VERSO_CONFIG.header.mainTitle;
-
-            // Safe text setter to prevent null reference errors
+            // Safe setter helpers to prevent null reference errors if elements are missing
             const setSafeText = (parent, selector, text) => {
                 const el = parent ? parent.querySelector(selector) : null;
                 if (el) el.textContent = text;
             };
+            const setSafeHtml = (parent, selector, html) => {
+                const el = parent ? parent.querySelector(selector) : null;
+                if (el) el.innerHTML = html;
+            };
+
+            // 1. Setup Brand & Header
+            const brandEl = document.querySelector('.verso-brand');
+            if (brandEl) {
+                if (VERSO_CONFIG.brand.logoUrl) {
+                    const img = document.createElement('img');
+                    img.src = VERSO_CONFIG.brand.logoUrl;
+                    img.alt = VERSO_CONFIG.brand.name;
+                    img.style.maxHeight = '20px';
+                    img.style.display = 'block';
+                    // Jika gambar gagal dimuat, kembalikan ke teks asli dengan aman
+                    img.onerror = () => { 
+                        img.style.display = 'none'; 
+                        brandEl.innerHTML = `${VERSO_CONFIG.brand.name} <span>/</span> ${VERSO_CONFIG.brand.edition}`; 
+                    };
+                    brandEl.innerHTML = '';
+                    brandEl.appendChild(img);
+                } else {
+                    brandEl.innerHTML = `${VERSO_CONFIG.brand.name} <span>/</span> ${VERSO_CONFIG.brand.edition}`;
+                }
+            }
+
+            const pageTitle = document.querySelector('.verso-page-title');
+            if (pageTitle) {
+                setSafeText(pageTitle, 'p', VERSO_CONFIG.header.pageSubtitle);
+                setSafeText(pageTitle, 'h1', VERSO_CONFIG.header.mainTitle);
+            }
 
             // 2. Setup Login Form
             const loginForm = document.querySelector('.verso-panel--login-form');
-            setSafeText(loginForm, '.verso-form-title', VERSO_CONFIG.login.formTitle);
-            setSafeText(loginForm, 'label[for="loginEmail"]', VERSO_CONFIG.login.usernameLabel);
-            setSafeText(loginForm, 'label[for="loginPwd"]', VERSO_CONFIG.login.passwordLabel);
-            
-            const keepMeLabel = loginForm.querySelector('.verso-checkbox-label');
-            if(keepMeLabel && keepMeLabel.lastChild && keepMeLabel.lastChild.nodeType === Node.TEXT_NODE) keepMeLabel.lastChild.textContent = ' ' + VERSO_CONFIG.login.keepSignedIn;
-            
-            setSafeText(loginForm, '.verso-link', VERSO_CONFIG.login.forgotPassword);
-            setSafeText(loginForm, '.verso-btn', VERSO_CONFIG.login.submitButton);
-            
-            const loginFooter = loginForm.querySelector('.verso-form-footer');
-            if(loginFooter && loginFooter.childNodes[0] && loginFooter.childNodes[0].nodeType === Node.TEXT_NODE) loginFooter.childNodes[0].nodeValue = VERSO_CONFIG.login.footerText + ' ';
-            setSafeText(loginForm, '#btnToRegister', VERSO_CONFIG.login.footerLink);
+            if (loginForm) {
+                setSafeText(loginForm, '.verso-form-title', VERSO_CONFIG.login.formTitle);
+                setSafeText(loginForm, 'label[for="loginEmail"]', VERSO_CONFIG.login.usernameLabel);
+                setSafeText(loginForm, 'label[for="loginPwd"]', VERSO_CONFIG.login.passwordLabel);
+                
+                const keepMeLabel = loginForm.querySelector('.verso-checkbox-label');
+                if (keepMeLabel && keepMeLabel.lastChild && keepMeLabel.lastChild.nodeType === Node.TEXT_NODE) {
+                    keepMeLabel.lastChild.textContent = ' ' + VERSO_CONFIG.login.keepSignedIn;
+                }
+                
+                setSafeText(loginForm, '.verso-link', VERSO_CONFIG.login.forgotPassword);
+                setSafeText(loginForm, '.verso-btn', VERSO_CONFIG.login.submitButton);
+                
+                const loginFooter = loginForm.querySelector('.verso-form-footer');
+                if (loginFooter && loginFooter.childNodes[0] && loginFooter.childNodes[0].nodeType === Node.TEXT_NODE) {
+                    loginFooter.childNodes[0].nodeValue = VERSO_CONFIG.login.footerText + ' ';
+                }
+                setSafeText(loginForm, '#btnToRegister', VERSO_CONFIG.login.footerLink);
+            }
 
             // 3. Setup Register Form
             const regForm = document.querySelector('.verso-panel--register-form');
-            setSafeText(regForm, '.verso-form-title', VERSO_CONFIG.register.formTitle);
-            setSafeText(regForm, 'label[for="regName"]', VERSO_CONFIG.register.nameLabel);
-            setSafeText(regForm, 'label[for="regEmail"]', VERSO_CONFIG.register.emailLabel);
-            setSafeText(regForm, 'label[for="regPwd"]', VERSO_CONFIG.register.passwordLabel);
-            setSafeText(regForm, '.verso-btn', VERSO_CONFIG.register.submitButton);
-            
-            const regFooter = regForm.querySelector('.verso-form-footer');
-            if(regFooter && regFooter.childNodes[0] && regFooter.childNodes[0].nodeType === Node.TEXT_NODE) regFooter.childNodes[0].nodeValue = VERSO_CONFIG.register.footerText + ' ';
-            setSafeText(regForm, '#btnToLogin', VERSO_CONFIG.register.footerLink);
+            if (regForm) {
+                setSafeText(regForm, '.verso-form-title', VERSO_CONFIG.register.formTitle);
+                setSafeText(regForm, 'label[for="regName"]', VERSO_CONFIG.register.nameLabel);
+                setSafeText(regForm, 'label[for="regEmail"]', VERSO_CONFIG.register.emailLabel);
+                setSafeText(regForm, 'label[for="regPwd"]', VERSO_CONFIG.register.passwordLabel);
+                setSafeText(regForm, '.verso-btn', VERSO_CONFIG.register.submitButton);
+                
+                const regFooter = regForm.querySelector('.verso-form-footer');
+                if (regFooter && regFooter.childNodes[0] && regFooter.childNodes[0].nodeType === Node.TEXT_NODE) {
+                    regFooter.childNodes[0].nodeValue = VERSO_CONFIG.register.footerText + ' ';
+                }
+                setSafeText(regForm, '#btnToLogin', VERSO_CONFIG.register.footerLink);
+            }
 
             // 4. Setup Welcome Texts (Green Panels)
             const loginText = document.querySelector('.verso-panel--login-text');
-            loginText.querySelector('.verso-label-small').textContent = VERSO_CONFIG.login.welcomeLabel;
-            loginText.querySelector('.verso-heading').innerHTML = VERSO_CONFIG.login.welcomeTitleHtml;
-            loginText.querySelector('.verso-description').textContent = VERSO_CONFIG.login.welcomeDesc;
+            if (loginText) {
+                setSafeText(loginText, '.verso-label-small', VERSO_CONFIG.login.welcomeLabel);
+                setSafeHtml(loginText, '.verso-heading', VERSO_CONFIG.login.welcomeTitleHtml);
+                setSafeText(loginText, '.verso-description', VERSO_CONFIG.login.welcomeDesc);
+            }
 
             const regText = document.querySelector('.verso-panel--register-text');
-            regText.querySelector('.verso-label-small').textContent = VERSO_CONFIG.register.welcomeLabel;
-            regText.querySelector('.verso-heading').innerHTML = VERSO_CONFIG.register.welcomeTitleHtml;
-            regText.querySelector('.verso-description').textContent = VERSO_CONFIG.register.welcomeDesc;
+            if (regText) {
+                setSafeText(regText, '.verso-label-small', VERSO_CONFIG.register.welcomeLabel);
+                setSafeHtml(regText, '.verso-heading', VERSO_CONFIG.register.welcomeTitleHtml);
+                setSafeText(regText, '.verso-description', VERSO_CONFIG.register.welcomeDesc);
+            }
 
             // 5. Setup Optional Background Images
             const setupBgImage = (panel, url) => {
-                if (url) {
+                if (url && panel) {
                     const bg = document.createElement('div');
                     bg.style.position = 'absolute';
                     bg.style.inset = '0';
@@ -777,8 +844,8 @@
                 }
             };
 
-            setupBgImage(loginText, VERSO_CONFIG.images.loginBgUrl);
-            setupBgImage(regText, VERSO_CONFIG.images.registerBgUrl);
+            setupBgImage(document.querySelector('.verso-panel--login-text'), VERSO_CONFIG.images.loginBgUrl);
+            setupBgImage(document.querySelector('.verso-panel--register-text'), VERSO_CONFIG.images.registerBgUrl);
 
         } catch (e) {
             console.error("Verso Configuration Error:", e);
